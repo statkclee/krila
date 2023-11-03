@@ -1,0 +1,192 @@
+---
+title: "데이터"
+editor_options: 
+  chunk_output_type: console
+---
+
+# 코드북
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+codebook_raw <- read_excel("data/4. 2022 법령상 사무총조사 코드북06.xlsx", skip = 1)
+
+codebook <- codebook_raw |> 
+  janitor::clean_names(ascii = FALSE) |> 
+  fill(everything(), .direction = "down") |> 
+  rename("설명" = "x1행_설명") |> 
+  filter(!str_detect(설명, "^주"))
+```
+
+```{r}
+library(gt)
+library(gtExtras)
+
+codebook |> 
+  gt::gt(groupname_col = c("설명", "변수명")) |> 
+  gt_theme_538() |> 
+  cols_width(
+    변수설명 ~ px(300)
+  )
+```
+
+# 분석
+
+```{r}
+survey_raw <- read_excel("data/3. 2019사무목록 최종본(인쇄용 최종).xlsx", sheet = "전체(신규법령표시)")
+
+survey_tbl <- survey_raw |> 
+  ## 부처구분
+  mutate(소속 = case_when(str_detect(소관부처, ".*부$") ~ "부",
+                         str_detect(소관부처, ".*청$") ~ "청",
+                         소관부처 %in% c("대통령비서실", "국가안보실", 
+"대통령경호처", "국가정보원") ~ "대통령",
+                         소관부처 %in% c("국무조정실", "국무총리비서실", "국가보훈처", "인사혁신처", "법제처", "식품의약품안전처") ~ "국무총리",
+                         str_detect(소관부처, ".*위원회$") ~ "위원회",
+                         TRUE ~ "기타")) |>
+  ## 사무구분
+  mutate(사무구분_대 = case_when(
+    # 국가
+    str_detect(사무유형, "국가직접처리사무|특별지방행정기관사무|국가위탁사무") ~ "국가",
+    사무유형 %in% c("시도 및 시군구 위임사무", "시도 위임사무", "시군구 위임사무", "시군구 재위임사무") ~ "국가",
+    # 국가-지자체 공동
+    str_detect(사무유형, "국가-시도-시군구 공동사무|국가-시도 공동사무|국가-시군구 공동사무") ~ "공동",
+    # 지방자치
+    str_detect(사무유형, "시도직접처리사무|시도 위탁사무|시도-시군구 위임사무") ~ "지자체",
+    str_detect(사무유형, "시군구직접처리사무|시군구 위탁사무") ~ "지자체",
+    str_detect(사무유형, "시도 및 시군구 공동사무") ~ "지자체",    
+    TRUE ~ "기타"
+  )) |> 
+  mutate(사무구분_중 = case_when(
+    # 국가사무 중분류 ----------------------
+    str_detect(사무구분_대, "국가") &
+    str_detect(사무유형, "국가직접처리사무|특별지방행정기관사무|국가위탁사무")  ~ "국가_직접",
+    str_detect(사무구분_대, "국가") &
+    사무유형 %in% c("시도 및 시군구 위임사무", "시도 위임사무", "시군구 위임사무", "시군구 재위임사무") ~ "국가_위임",
+    # 국가-지자체 공동 중분류 --------------
+    str_detect(사무구분_대, "공동") &
+    사무유형 %in% c("국가-시도-시군구 공동사무", "국가-시도 공동사무", "국가-시군구 공동사무") ~ "공동",
+    # 지방자치 중분류 ----------------------
+    str_detect(사무구분_대, "지자체") &
+    str_detect(사무유형, "시도직접처리사무|시도 위탁사무") ~ "지자체_시도",
+    str_detect(사무구분_대, "지자체") &
+    사무유형 == "시도-시군구 위임사무" ~ "지자체_시도위임",
+    str_detect(사무구분_대, "지자체") &
+    str_detect(사무유형, "시군구직접처리사무|시군구 위탁사무") ~ "지자체_시군구",
+    str_detect(사무구분_대, "지자체") &
+    str_detect(사무유형, "시도 및 시군구 공동사무") ~ "지자체_공동",    
+    TRUE ~ "기타"
+  )) |> 
+  select(사무구분_대, 사무구분_중, everything()) |> 
+  separate(사무구분_중, into = c("사무구분_중", "사무구분_소"), sep = "_") |> 
+  mutate(사무구분_소 = ifelse(is.na(사무구분_소), 사무구분_중, 사무구분_소))
+
+부처수_dat <- survey_tbl |> 
+  group_by(소속, 소관부처) |> 
+  summarise(사무개수= n()) |> 
+  ungroup() |> 
+  select(-사무개수)
+
+부처수_tbl <- survey_tbl |> 
+  group_by(소속, 소관부처) |> 
+  summarise(사무개수= n()) |> 
+  ungroup() |> 
+  group_by(소속) |> 
+  summarise(소관부처수 = n()) |> 
+  arrange(desc(소관부처수))
+```
+
+## 소관 사무업무수
+
+```{r}
+library(gt)
+library(gtExtras)
+
+survey_tbl |> 
+  group_by(소관부처) |> 
+  summarise(사무업무수 = n()) |> 
+  left_join(부처수_dat) |> 
+  select(소속, 소관부처, 사무업무수) |> 
+  mutate(비율 = 사무업무수 / sum(사무업무수)) |> 
+  ungroup() |> 
+  # group_by(소속) |> 
+  # arrange(desc(사무업무수)) |> 
+  gt(groupname_col = c("소속")) |> 
+  gt_theme_538() |> 
+  fmt_percent(비율, decimals = 1) |> 
+  fmt_integer(사무업무수) |>
+  # 총계 ----------------------
+  grand_summary_rows(
+    columns = 사무업무수,
+    fns = list(label = "합계", fn = "sum"),
+    fmt = ~ fmt_integer(.),
+    side = "top"  ) |> 
+  grand_summary_rows(
+    columns = 비율,
+    fns = list(label = "합계", fn = "sum"),
+    fmt = ~ fmt_percent(., decimals = 0),
+    side = "top"  ) |>
+  # 소계 ----------------------  
+  summary_rows(
+    columns = 사무업무수,
+    fns = list(label = "소계", fn = "sum"),
+    fmt = ~ fmt_integer(.),
+    side = "bottom"  ) |> 
+  summary_rows(
+    columns = 비율,
+    fns = list(label = "소계", fn = "sum"),
+    fmt = ~ fmt_percent(., decimals = 0),
+    side = "bottom"  ) |> 
+  cols_align(columns = 소관부처,
+             "center")
+```
+
+
+## 사무유형 사무수
+
+```{r}
+survey_tbl |>
+  group_by(사무구분_대, 사무구분_중, 사무구분_소, 사무유형) |> 
+  summarise(사무업무수 = n()) |> 
+  ungroup() |> 
+  mutate(비율 = 사무업무수 / sum(사무업무수)) |> 
+  ungroup() |> 
+  group_by(사무구분_대, 사무구분_중, 사무구분_소) |> 
+  gt(groupname_col = c("사무구분_대", "사무구분_중")) |> 
+  gt_theme_538() |> 
+  fmt_percent(비율, decimals = 1) |>  
+  fmt_integer(사무업무수) |> 
+  # 총계 ----------------------
+  grand_summary_rows(
+    columns = 사무업무수,
+    fns = list(label = "합계", fn = "sum"),
+    fmt = ~ fmt_integer(.),
+    side = "top"  ) |> 
+  grand_summary_rows(
+    columns = 비율,
+    fns = list(label = "합계", fn = "sum"),
+    fmt = ~ fmt_percent(., decimals = 0),
+    side = "top"  ) |>
+  # 소계 ----------------------  
+  summary_rows(
+    columns = 사무업무수,
+    fns = list(label = "소계", fn = "sum"),
+    fmt = ~ fmt_integer(.),
+    side = "bottom"  ) |> 
+  summary_rows(
+    columns = 비율,
+    fns = list(label = "소계", fn = "sum"),
+    fmt = ~ fmt_percent(., decimals = 0),
+    side = "bottom"  ) |> 
+  cols_align(columns = 사무유형,
+             "center")
+```
+
+## 소관과 사무유형
+
+```{r}
+survey_tbl |>
+  count(소속, 사무구분_대) |> 
+  pivot_wider(names_from = 사무구분_대, values_from = n)
+```  

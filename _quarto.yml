@@ -1,0 +1,62 @@
+project:
+  type: website
+  output-dir: docs
+  resources:
+    - "data/*.mp3"
+  render:
+    - "*.qmd"
+    - "!*.Rmd"
+
+lang: ko-KR
+date-format: "YYYY년 MM월 DD일"
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    code-block-bg: "white"
+    code-block-border-left: "#31BAE9"
+    code-fold: true
+    code-overflow: wrap
+    toc: true
+    toc-depth: 3
+    toc-title: 목차
+    number-sections: true
+    highlight-style: github    
+    self-contained: false
+    default-image-extension: jpg
+
+
+editor: source
+
+filters:
+  - lightbox
+lightbox:
+  match: auto
+  effect: fade
+  
+knitr:
+  opts_chunk: 
+    echo: true
+    message: false
+    warning: false
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+
+website:
+  title: "법령상 사무총조사"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - domain.qmd        
+      - data.qmd
+      - model.qmd
+
+
+  
