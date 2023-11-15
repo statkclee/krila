@@ -1,0 +1,34 @@
+---
+title: "DB 연결"
+editor_options: 
+  chunk_output_type: console
+---
+
+# 코드북
+
+```{r}
+library(tidyverse)
+library(DBI)
+library(RPostgres)
+
+conn <- dbConnect(RPostgres::Postgres(),
+                  dbname = Sys.getenv('IHOPPER_DBNAME'),
+                  port = Sys.getenv('IHOPPER_PORT'),
+                  user = Sys.getenv('IHOPPER_USER'),
+                  password = Sys.getenv('IHOPPER_PASSWORD'),
+                  host = Sys.getenv('IHOPPER_HOST'))
+
+# dbListTables(conn)
+```
+
+
+```{r}
+law_tbl <- read_csv("data/law_mst.csv")
+
+provision_str <- law_tbl |> 
+  filter(str_detect(law_kor_nm, "학교급식법 시행령")) |> 
+  mutate(법조문 = str_glue("{provision_cont}\n{ifelse(is.na(clause_cont),'',clause_cont)}")) |> pull(법조문)
+
+provision_str
+```
+
