@@ -160,8 +160,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda"><span class="header-section-number">2</span> EDA</a>
   <ul class="collapse">
   <li><a href="#법령명-행수" id="toc-법령명-행수" class="nav-link" data-scroll-target="#법령명-행수"><span class="header-section-number">2.1</span> 법령명 행수</a></li>
-  <li><a href="#전체-사무판단-건수" id="toc-전체-사무판단-건수" class="nav-link" data-scroll-target="#전체-사무판단-건수"><span class="header-section-number">2.2</span> 전체 사무판단 건수</a></li>
-  <li><a href="#전체-사무판단-건수-1" id="toc-전체-사무판단-건수-1" class="nav-link" data-scroll-target="#전체-사무판단-건수-1"><span class="header-section-number">2.3</span> 전체 사무판단 건수</a></li>
+  <li><a href="#사무판단-건수" id="toc-사무판단-건수" class="nav-link" data-scroll-target="#사무판단-건수"><span class="header-section-number">2.2</span> 사무판단 건수</a></li>
+  <li><a href="#사무판단-건수와-행수" id="toc-사무판단-건수와-행수" class="nav-link" data-scroll-target="#사무판단-건수와-행수"><span class="header-section-number">2.3</span> 사무판단 건수와 행수</a></li>
+  <li><a href="#행수분포와-사무판단" id="toc-행수분포와-사무판단" class="nav-link" data-scroll-target="#행수분포와-사무판단"><span class="header-section-number">2.4</span> 행수분포와 사무판단</a></li>
+  <li><a href="#수행주체" id="toc-수행주체" class="nav-link" data-scroll-target="#수행주체"><span class="header-section-number">2.5</span> 수행주체</a>
+  <ul class="collapse">
+  <li><a href="#조문-기준" id="toc-조문-기준" class="nav-link" data-scroll-target="#조문-기준"><span class="header-section-number">2.5.1</span> 조문 기준</a></li>
+  <li><a href="#법령-기준" id="toc-법령-기준" class="nav-link" data-scroll-target="#법령-기준"><span class="header-section-number">2.5.2</span> 법령 기준</a></li>
+  <li><a href="#국가사무-유형" id="toc-국가사무-유형" class="nav-link" data-scroll-target="#국가사무-유형"><span class="header-section-number">2.5.3</span> 국가사무 유형</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -198,8 +205,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="ot">&lt;-</span> law_raw <span class="sc">|&gt;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>(<span class="at">ascii =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무_판단 <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(사무_판단), <span class="dv">0</span>, 사무_판단)) </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무_판단 <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(사무_판단), <span class="dv">0</span>, 사무_판단)) <span class="sc">|&gt;</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무유형 <span class="ot">=</span> <span class="fu">str_remove</span>(사무유형, <span class="st">"</span><span class="sc">\r\n</span><span class="st">"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 사무유형: 국가, 시도, 공동, ...</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무유형 <span class="ot">=</span> <span class="fu">case_when</span>(사무유형 <span class="sc">==</span> <span class="st">"국가시도"</span> <span class="sc">~</span> <span class="st">"국가-시도"</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                              사무유형 <span class="sc">==</span> <span class="st">"정부"</span> <span class="sc">~</span> <span class="st">"국가"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                              사무유형 <span class="sc">==</span> <span class="st">"공동"</span> <span class="sc">~</span> <span class="st">"국가-시도"</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">is.na</span>(사무유형) <span class="sc">~</span> <span class="st">"없음"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                              <span class="cn">TRUE</span> <span class="sc">~</span> 사무유형))  </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -210,27 +223,494 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>코드</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(법령명, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"행수"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(행수, <span class="at">n =</span> <span class="dv">10</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 2</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    법령명                                    행수</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                                    &lt;int&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 자본시장과 금융투자업에 관한 법률 시행령  5590</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 조세특례제한법 시행령                     4878</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 자본시장과 금융투자업에 관한 법률         4693</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 소득세법 시행령                           3427</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 자동차관리법 시행규칙                     3372</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 조세특례제한법                            3254</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 관세법 시행령                             3141</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 산업안전보건기준에 관한 규칙              2717</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 법인세법 시행령                           2406</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 관세법                                    2365</span></span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(법령명, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"행수"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(행수, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+
+<div id="xnronisgfb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xnronisgfb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#xnronisgfb thead, #xnronisgfb tbody, #xnronisgfb tfoot, #xnronisgfb tr, #xnronisgfb td, #xnronisgfb th {
+  border-style: none;
+}
+
+#xnronisgfb p {
+  margin: 0;
+  padding: 0;
+}
+
+#xnronisgfb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#xnronisgfb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xnronisgfb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xnronisgfb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xnronisgfb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xnronisgfb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xnronisgfb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xnronisgfb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xnronisgfb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#xnronisgfb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#xnronisgfb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xnronisgfb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xnronisgfb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xnronisgfb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xnronisgfb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnronisgfb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xnronisgfb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xnronisgfb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#xnronisgfb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnronisgfb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xnronisgfb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnronisgfb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xnronisgfb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnronisgfb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xnronisgfb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xnronisgfb .gt_left {
+  text-align: left;
+}
+
+#xnronisgfb .gt_center {
+  text-align: center;
+}
+
+#xnronisgfb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xnronisgfb .gt_font_normal {
+  font-weight: normal;
+}
+
+#xnronisgfb .gt_font_bold {
+  font-weight: bold;
+}
+
+#xnronisgfb .gt_font_italic {
+  font-style: italic;
+}
+
+#xnronisgfb .gt_super {
+  font-size: 65%;
+}
+
+#xnronisgfb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#xnronisgfb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xnronisgfb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xnronisgfb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xnronisgfb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xnronisgfb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xnronisgfb .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="법령명">법령명</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="행수">행수</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="법령명" class="gt_row gt_left">자본시장과 금융투자업에 관한 법률 시행령</td>
+<td headers="행수" class="gt_row gt_right">5590</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">조세특례제한법 시행령</td>
+<td headers="행수" class="gt_row gt_right">4878</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">자본시장과 금융투자업에 관한 법률</td>
+<td headers="행수" class="gt_row gt_right">4693</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">소득세법 시행령</td>
+<td headers="행수" class="gt_row gt_right">3427</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">자동차관리법 시행규칙</td>
+<td headers="행수" class="gt_row gt_right">3372</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">조세특례제한법</td>
+<td headers="행수" class="gt_row gt_right">3254</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">관세법 시행령</td>
+<td headers="행수" class="gt_row gt_right">3141</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">산업안전보건기준에 관한 규칙</td>
+<td headers="행수" class="gt_row gt_right">2717</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">법인세법 시행령</td>
+<td headers="행수" class="gt_row gt_right">2406</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_left">관세법</td>
+<td headers="행수" class="gt_row gt_right">2365</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
 </div>
 </section>
-<section id="전체-사무판단-건수" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="전체-사무판단-건수"><span class="header-section-number">2.2</span> 전체 사무판단 건수</h2>
+<section id="사무판단-건수" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="사무판단-건수"><span class="header-section-number">2.2</span> 사무판단 건수</h2>
 <div class="cell">
 <details>
 <summary>코드</summary>
@@ -239,37 +719,2920 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(is.na(사무_판단)) |&gt; </span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무_판단, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"건수"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(비율 <span class="ot">=</span> 건수 <span class="sc">/</span> <span class="fu">sum</span>(건수)) <span class="sc">|&gt;</span> </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_totals</span>(<span class="at">name =</span> <span class="st">"합계"</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  사무_판단   건수       비율</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          0 801689 0.93033692</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          1  60030 0.06966308</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       합계 861719 1.00000000</span></span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_totals</span>(<span class="at">name =</span> <span class="st">"합계"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="st">"center"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(건수) <span class="sc">|&gt;</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(비율, <span class="at">decimals =</span> <span class="dv">1</span>)</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+
+<div id="sgjtictero" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#sgjtictero table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#sgjtictero thead, #sgjtictero tbody, #sgjtictero tfoot, #sgjtictero tr, #sgjtictero td, #sgjtictero th {
+  border-style: none;
+}
+
+#sgjtictero p {
+  margin: 0;
+  padding: 0;
+}
+
+#sgjtictero .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#sgjtictero .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#sgjtictero .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#sgjtictero .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#sgjtictero .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sgjtictero .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sgjtictero .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sgjtictero .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#sgjtictero .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#sgjtictero .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#sgjtictero .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#sgjtictero .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#sgjtictero .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#sgjtictero .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#sgjtictero .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sgjtictero .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#sgjtictero .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#sgjtictero .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#sgjtictero .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sgjtictero .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#sgjtictero .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#sgjtictero .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#sgjtictero .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sgjtictero .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#sgjtictero .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#sgjtictero .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sgjtictero .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sgjtictero .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#sgjtictero .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sgjtictero .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#sgjtictero .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sgjtictero .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sgjtictero .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sgjtictero .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sgjtictero .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sgjtictero .gt_left {
+  text-align: left;
+}
+
+#sgjtictero .gt_center {
+  text-align: center;
+}
+
+#sgjtictero .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#sgjtictero .gt_font_normal {
+  font-weight: normal;
+}
+
+#sgjtictero .gt_font_bold {
+  font-weight: bold;
+}
+
+#sgjtictero .gt_font_italic {
+  font-style: italic;
+}
+
+#sgjtictero .gt_super {
+  font-size: 65%;
+}
+
+#sgjtictero .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#sgjtictero .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#sgjtictero .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#sgjtictero .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#sgjtictero .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#sgjtictero .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#sgjtictero .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="사무_판단">사무_판단</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="건수">건수</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="비율">비율</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="사무_판단" class="gt_row gt_center">0</td>
+<td headers="건수" class="gt_row gt_center">801,689</td>
+<td headers="비율" class="gt_row gt_center">93.0%</td></tr>
+    <tr><td headers="사무_판단" class="gt_row gt_center">1</td>
+<td headers="건수" class="gt_row gt_center">60,030</td>
+<td headers="비율" class="gt_row gt_center">7.0%</td></tr>
+    <tr><td headers="사무_판단" class="gt_row gt_center">합계</td>
+<td headers="건수" class="gt_row gt_center">861,719</td>
+<td headers="비율" class="gt_row gt_center">100.0%</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
 </div>
 </section>
-<section id="전체-사무판단-건수-1" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="전체-사무판단-건수-1"><span class="header-section-number">2.3</span> 전체 사무판단 건수</h2>
+<section id="사무판단-건수와-행수" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="사무판단-건수와-행수"><span class="header-section-number">2.3</span> 사무판단 건수와 행수</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">표</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">그래프</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <details>
 <summary>코드</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(사무건수) <span class="sc">|&gt;</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> 행수, <span class="at">y =</span> 사무건수)) <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(사무건수, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="st">"center"</span>) </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<div id="lbzyyhwcto" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#lbzyyhwcto table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#lbzyyhwcto thead, #lbzyyhwcto tbody, #lbzyyhwcto tfoot, #lbzyyhwcto tr, #lbzyyhwcto td, #lbzyyhwcto th {
+  border-style: none;
+}
+
+#lbzyyhwcto p {
+  margin: 0;
+  padding: 0;
+}
+
+#lbzyyhwcto .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#lbzyyhwcto .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#lbzyyhwcto .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#lbzyyhwcto .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#lbzyyhwcto .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#lbzyyhwcto .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#lbzyyhwcto .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#lbzyyhwcto .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#lbzyyhwcto .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#lbzyyhwcto .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#lbzyyhwcto .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lbzyyhwcto .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#lbzyyhwcto .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#lbzyyhwcto .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#lbzyyhwcto .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lbzyyhwcto .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#lbzyyhwcto .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#lbzyyhwcto .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#lbzyyhwcto .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lbzyyhwcto .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#lbzyyhwcto .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lbzyyhwcto .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#lbzyyhwcto .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lbzyyhwcto .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lbzyyhwcto .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lbzyyhwcto .gt_left {
+  text-align: left;
+}
+
+#lbzyyhwcto .gt_center {
+  text-align: center;
+}
+
+#lbzyyhwcto .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#lbzyyhwcto .gt_font_normal {
+  font-weight: normal;
+}
+
+#lbzyyhwcto .gt_font_bold {
+  font-weight: bold;
+}
+
+#lbzyyhwcto .gt_font_italic {
+  font-style: italic;
+}
+
+#lbzyyhwcto .gt_super {
+  font-size: 65%;
+}
+
+#lbzyyhwcto .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#lbzyyhwcto .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#lbzyyhwcto .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#lbzyyhwcto .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#lbzyyhwcto .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#lbzyyhwcto .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#lbzyyhwcto .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="법령명">법령명</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="사무건수">사무건수</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="행수">행수</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="법령명" class="gt_row gt_center">제주특별자치도 설치 및 국제자유도시 조성을 위한 특별법</td>
+<td headers="사무건수" class="gt_row gt_center">332</td>
+<td headers="행수" class="gt_row gt_center">2358</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">자본시장과 금융투자업에 관한 법률</td>
+<td headers="사무건수" class="gt_row gt_center">281</td>
+<td headers="행수" class="gt_row gt_center">4693</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">지방세특례제한법</td>
+<td headers="사무건수" class="gt_row gt_center">270</td>
+<td headers="행수" class="gt_row gt_center">1788</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">재난 및 안전관리 기본법</td>
+<td headers="사무건수" class="gt_row gt_center">258</td>
+<td headers="행수" class="gt_row gt_center">902</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">대기환경보전법</td>
+<td headers="사무건수" class="gt_row gt_center">257</td>
+<td headers="행수" class="gt_row gt_center">1155</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">물환경보전법</td>
+<td headers="사무건수" class="gt_row gt_center">252</td>
+<td headers="행수" class="gt_row gt_center">954</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">관세법</td>
+<td headers="사무건수" class="gt_row gt_center">244</td>
+<td headers="행수" class="gt_row gt_center">2365</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">산림보호법</td>
+<td headers="사무건수" class="gt_row gt_center">218</td>
+<td headers="행수" class="gt_row gt_center">806</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">폐기물관리법</td>
+<td headers="사무건수" class="gt_row gt_center">204</td>
+<td headers="행수" class="gt_row gt_center">964</td></tr>
+    <tr><td headers="법령명" class="gt_row gt_center">수도법</td>
+<td headers="사무건수" class="gt_row gt_center">182</td>
+<td headers="행수" class="gt_row gt_center">778</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(사무건수) <span class="sc">|&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> 행수, <span class="at">y =</span> 사무건수)) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="EDA_files/figure-html/unnamed-chunk-4-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="EDA_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></a></p>
+<p><a href="EDA_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="EDA_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+</section>
+<section id="행수분포와-사무판단" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="행수분포와-사무판단"><span class="header-section-number">2.4</span> 행수분포와 사무판단</h2>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무판단 <span class="ot">=</span> <span class="fu">ifelse</span>(사무건수 <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"사무없음"</span>, <span class="st">"사무있음"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> 행수, <span class="at">fill =</span> 사무판단)) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_sqrt</span>() </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="EDA_files/figure-html/unnamed-chunk-6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="EDA_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="수행주체" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="수행주체"><span class="header-section-number">2.5</span> 수행주체</h2>
+<section id="조문-기준" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="조문-기준"><span class="header-section-number">2.5.1</span> 조문 기준</h3>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtExtras)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(중앙지자체 <span class="ot">=</span> <span class="fu">case_when</span>(사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"국가"</span>) <span class="sc">~</span> <span class="st">"중앙정부"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                                사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"시도"</span>, <span class="st">"시도-시군구"</span>, <span class="st">"시군구"</span>) <span class="sc">~</span> <span class="st">"지자체"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                                <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"공동"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(사무유형 <span class="sc">!=</span> <span class="st">"없음"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(중앙지자체, 사무유형, <span class="at">name =</span> <span class="st">"건수"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(비율 <span class="ot">=</span> 건수 <span class="sc">/</span> <span class="fu">sum</span>(건수)) <span class="sc">|&gt;</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>(<span class="at">groupname_col =</span> <span class="st">"중앙지자체"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">rowname_col   =</span> <span class="st">"사무유형"</span>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(비율, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(건수) <span class="sc">|&gt;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"건수"</span>),</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_integer</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"비율"</span>),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_percent,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">0</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_538</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<div id="nhgzdbgrqd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+#nhgzdbgrqd table {
+  font-family: Cairo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#nhgzdbgrqd thead, #nhgzdbgrqd tbody, #nhgzdbgrqd tfoot, #nhgzdbgrqd tr, #nhgzdbgrqd td, #nhgzdbgrqd th {
+  border-style: none;
+}
+
+#nhgzdbgrqd p {
+  margin: 0;
+  padding: 0;
+}
+
+#nhgzdbgrqd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 3px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#nhgzdbgrqd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#nhgzdbgrqd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#nhgzdbgrqd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#nhgzdbgrqd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#nhgzdbgrqd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#nhgzdbgrqd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#nhgzdbgrqd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#nhgzdbgrqd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#nhgzdbgrqd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#nhgzdbgrqd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#nhgzdbgrqd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#nhgzdbgrqd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#nhgzdbgrqd .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#nhgzdbgrqd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 0px;
+  border-right-color: #FFFFFF;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nhgzdbgrqd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#nhgzdbgrqd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#nhgzdbgrqd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#nhgzdbgrqd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nhgzdbgrqd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#nhgzdbgrqd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nhgzdbgrqd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#nhgzdbgrqd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nhgzdbgrqd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nhgzdbgrqd .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nhgzdbgrqd .gt_left {
+  text-align: left;
+}
+
+#nhgzdbgrqd .gt_center {
+  text-align: center;
+}
+
+#nhgzdbgrqd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#nhgzdbgrqd .gt_font_normal {
+  font-weight: normal;
+}
+
+#nhgzdbgrqd .gt_font_bold {
+  font-weight: bold;
+}
+
+#nhgzdbgrqd .gt_font_italic {
+  font-style: italic;
+}
+
+#nhgzdbgrqd .gt_super {
+  font-size: 65%;
+}
+
+#nhgzdbgrqd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#nhgzdbgrqd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#nhgzdbgrqd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#nhgzdbgrqd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#nhgzdbgrqd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#nhgzdbgrqd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#nhgzdbgrqd .gt_indent_5 {
+  text-indent: 25px;
+}
+
+tbody tr:last-child {
+  border-bottom: 2px solid #ffffff00;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; font-family: Chivo; font-size: 14px; vertical-align: bottom; font-weight: 200; text-transform: uppercase;" scope="col" id="건수">건수</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; font-family: Chivo; font-size: 14px; vertical-align: bottom; font-weight: 200; text-transform: uppercase;" scope="col" id="비율">비율</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="공동">공동</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub">국가-시군구</th>
+<td headers="공동 stub_1_1 건수" class="gt_row gt_right">195</td>
+<td headers="공동 stub_1_1 비율" class="gt_row gt_right">0.3%</td></tr>
+    <tr><th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub">국가-시도</th>
+<td headers="공동 stub_1_2 건수" class="gt_row gt_right">1,427</td>
+<td headers="공동 stub_1_2 비율" class="gt_row gt_right">2.4%</td></tr>
+    <tr><th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub">국가-시도-시군구</th>
+<td headers="공동 stub_1_3 건수" class="gt_row gt_right">5,539</td>
+<td headers="공동 stub_1_3 비율" class="gt_row gt_right">9.2%</td></tr>
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="중앙정부">중앙정부</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub">국가</th>
+<td headers="중앙정부 stub_1_4 건수" class="gt_row gt_right">41,834</td>
+<td headers="중앙정부 stub_1_4 비율" class="gt_row gt_right">69.6%</td></tr>
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="지자체">지자체</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub">시군구</th>
+<td headers="지자체 stub_1_5 건수" class="gt_row gt_right">3,239</td>
+<td headers="지자체 stub_1_5 비율" class="gt_row gt_right">5.4%</td></tr>
+    <tr><th id="stub_1_6" scope="row" class="gt_row gt_left gt_stub">시도</th>
+<td headers="지자체 stub_1_6 건수" class="gt_row gt_right">3,358</td>
+<td headers="지자체 stub_1_6 비율" class="gt_row gt_right">5.6%</td></tr>
+    <tr><th id="stub_1_7" scope="row" class="gt_row gt_left gt_stub">시도-시군구</th>
+<td headers="지자체 stub_1_7 건수" class="gt_row gt_right">4,479</td>
+<td headers="지자체 stub_1_7 비율" class="gt_row gt_right">7.5%</td></tr>
+    <tr><th id="grand_summary_stub_1" scope="row" class="gt_row gt_left gt_stub gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">합계</th>
+<td headers="grand_summary_stub_1 건수" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">60,071</td>
+<td headers="grand_summary_stub_1 비율" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">100%</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="법령-기준" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="법령-기준"><span class="header-section-number">2.5.2</span> 법령 기준</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">표</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">그래프</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(중앙지자체 <span class="ot">=</span> <span class="fu">case_when</span>(사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"국가"</span>) <span class="sc">~</span> <span class="st">"중앙정부"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"시도"</span>, <span class="st">"시도-시군구"</span>, <span class="st">"시군구"</span>) <span class="sc">~</span> <span class="st">"지자체"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                                사무유형 <span class="sc">==</span> <span class="st">"없음"</span> <span class="sc">~</span> <span class="st">"없음"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                                <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"공동"</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(사무유형 != "없음") |&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(중앙지자체, 사무유형) <span class="sc">|&gt;</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(중앙지자체, 사무유형, <span class="at">name =</span> <span class="st">"법령건수"</span>, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(비율 <span class="ot">=</span> 법령건수 <span class="sc">/</span> <span class="fu">sum</span>(법령건수)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>(<span class="at">groupname_col =</span> <span class="st">"중앙지자체"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">rowname_col   =</span> <span class="st">"사무유형"</span>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(비율, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(법령건수) <span class="sc">|&gt;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"법령건수"</span>),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_integer</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"비율"</span>),</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_percent,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">0</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_538</span>()  </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<div id="ntaaynvbyj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+#ntaaynvbyj table {
+  font-family: Cairo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ntaaynvbyj thead, #ntaaynvbyj tbody, #ntaaynvbyj tfoot, #ntaaynvbyj tr, #ntaaynvbyj td, #ntaaynvbyj th {
+  border-style: none;
+}
+
+#ntaaynvbyj p {
+  margin: 0;
+  padding: 0;
+}
+
+#ntaaynvbyj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 3px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ntaaynvbyj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ntaaynvbyj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ntaaynvbyj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ntaaynvbyj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ntaaynvbyj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ntaaynvbyj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ntaaynvbyj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ntaaynvbyj .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ntaaynvbyj .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ntaaynvbyj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#ntaaynvbyj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ntaaynvbyj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ntaaynvbyj .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ntaaynvbyj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 0px;
+  border-right-color: #FFFFFF;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntaaynvbyj .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ntaaynvbyj .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ntaaynvbyj .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ntaaynvbyj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntaaynvbyj .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ntaaynvbyj .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntaaynvbyj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ntaaynvbyj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntaaynvbyj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ntaaynvbyj .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntaaynvbyj .gt_left {
+  text-align: left;
+}
+
+#ntaaynvbyj .gt_center {
+  text-align: center;
+}
+
+#ntaaynvbyj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ntaaynvbyj .gt_font_normal {
+  font-weight: normal;
+}
+
+#ntaaynvbyj .gt_font_bold {
+  font-weight: bold;
+}
+
+#ntaaynvbyj .gt_font_italic {
+  font-style: italic;
+}
+
+#ntaaynvbyj .gt_super {
+  font-size: 65%;
+}
+
+#ntaaynvbyj .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ntaaynvbyj .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ntaaynvbyj .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ntaaynvbyj .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ntaaynvbyj .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ntaaynvbyj .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ntaaynvbyj .gt_indent_5 {
+  text-indent: 25px;
+}
+
+tbody tr:last-child {
+  border-bottom: 2px solid #ffffff00;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; font-family: Chivo; font-size: 14px; vertical-align: bottom; font-weight: 200; text-transform: uppercase;" scope="col" id="법령건수">법령건수</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; font-family: Chivo; font-size: 14px; vertical-align: bottom; font-weight: 200; text-transform: uppercase;" scope="col" id="비율">비율</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="없음">없음</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub">없음</th>
+<td headers="없음 stub_1_1 법령건수" class="gt_row gt_right">4,323</td>
+<td headers="없음 stub_1_1 비율" class="gt_row gt_right">40.2%</td></tr>
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="중앙정부">중앙정부</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub">국가</th>
+<td headers="중앙정부 stub_1_2 법령건수" class="gt_row gt_right">3,112</td>
+<td headers="중앙정부 stub_1_2 비율" class="gt_row gt_right">28.9%</td></tr>
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="공동">공동</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub">국가-시도-시군구</th>
+<td headers="공동 stub_1_3 법령건수" class="gt_row gt_right">974</td>
+<td headers="공동 stub_1_3 비율" class="gt_row gt_right">9.0%</td></tr>
+    <tr><th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub">국가-시도</th>
+<td headers="공동 stub_1_4 법령건수" class="gt_row gt_right">424</td>
+<td headers="공동 stub_1_4 비율" class="gt_row gt_right">3.9%</td></tr>
+    <tr><th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub">국가-시군구</th>
+<td headers="공동 stub_1_5 법령건수" class="gt_row gt_right">99</td>
+<td headers="공동 stub_1_5 비율" class="gt_row gt_right">0.9%</td></tr>
+    <tr class="gt_group_heading_row">
+      <th colspan="3" class="gt_group_heading" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black;" scope="colgroup" id="지자체">지자체</th>
+    </tr>
+    <tr class="gt_row_group_first"><th id="stub_1_6" scope="row" class="gt_row gt_left gt_stub">시도</th>
+<td headers="지자체 stub_1_6 법령건수" class="gt_row gt_right">694</td>
+<td headers="지자체 stub_1_6 비율" class="gt_row gt_right">6.4%</td></tr>
+    <tr><th id="stub_1_7" scope="row" class="gt_row gt_left gt_stub">시도-시군구</th>
+<td headers="지자체 stub_1_7 법령건수" class="gt_row gt_right">617</td>
+<td headers="지자체 stub_1_7 비율" class="gt_row gt_right">5.7%</td></tr>
+    <tr><th id="stub_1_8" scope="row" class="gt_row gt_left gt_stub">시군구</th>
+<td headers="지자체 stub_1_8 법령건수" class="gt_row gt_right">524</td>
+<td headers="지자체 stub_1_8 비율" class="gt_row gt_right">4.9%</td></tr>
+    <tr><th id="grand_summary_stub_1" scope="row" class="gt_row gt_left gt_stub gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">합계</th>
+<td headers="grand_summary_stub_1 법령건수" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">10,767</td>
+<td headers="grand_summary_stub_1 비율" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">100%</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p><a href="https://r-charts.com/part-whole/ggvenndiagram/">Venn diagram with ggVennDiagram</a></p>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggVennDiagram)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>affairs_type <span class="ot">&lt;-</span> law_tbl <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(사무유형 <span class="sc">!=</span> <span class="st">"없음"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무유형) <span class="sc">|&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(법령명, 사무유형) <span class="sc">|&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(사무유형, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"사무1"</span>, <span class="st">"사무2"</span>, <span class="st">"사무3"</span>), <span class="at">sep =</span> <span class="st">"-"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(번호 <span class="ot">=</span> <span class="fu">row_number</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무1 <span class="ot">=</span> <span class="fu">str_glue</span>(<span class="st">"{사무1}_{번호}"</span>),</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>         사무2 <span class="ot">=</span> <span class="fu">str_glue</span>(<span class="st">"{사무2}_{번호}"</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>         사무3 <span class="ot">=</span> <span class="fu">str_glue</span>(<span class="st">"{사무3}_{번호}"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>법령명, <span class="sc">-</span>n, <span class="sc">-</span>번호) <span class="sc">|&gt;</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(사무1<span class="sc">:</span>사무3, <span class="at">names_to =</span> <span class="st">"사무구분"</span>, <span class="at">values_to =</span> <span class="st">"사무"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(사무, <span class="st">"^NA"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(집합 <span class="ot">=</span> <span class="fu">case_when</span>(<span class="fu">str_detect</span>(사무, <span class="st">"국가"</span>) <span class="sc">~</span> <span class="st">"국가"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">str_detect</span>(사무, <span class="st">"시도"</span>) <span class="sc">~</span> <span class="st">"시도"</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">str_detect</span>(사무, <span class="st">"시군구"</span>) <span class="sc">~</span> <span class="st">"시군구"</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>                          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"기타"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(원소 <span class="ot">=</span> <span class="fu">str_extract</span>(사무, <span class="st">"</span><span class="sc">\\</span><span class="st">d{1,5}"</span>))</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>korea_type <span class="ot">&lt;-</span> affairs_type <span class="sc">|&gt;</span> </span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(집합 <span class="sc">==</span> <span class="st">"국가"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(원소) <span class="sc">|&gt;</span> </span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>sido_type <span class="ot">&lt;-</span> affairs_type <span class="sc">|&gt;</span> </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(집합 <span class="sc">==</span> <span class="st">"시도"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(원소) <span class="sc">|&gt;</span> </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>sgg_type <span class="ot">&lt;-</span> affairs_type <span class="sc">|&gt;</span> </span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(집합 <span class="sc">==</span> <span class="st">"시군구"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(원소) <span class="sc">|&gt;</span> </span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="fu">ggVennDiagram</span>(<span class="fu">list</span>(국가 <span class="ot">=</span> korea_type, 시도 <span class="ot">=</span> sido_type, 시군구 <span class="ot">=</span> sgg_type),</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>              <span class="at">category.names =</span> <span class="fu">c</span>(<span class="st">"국가"</span>,</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"시도"</span>,</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"구시군"</span>),</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>               <span class="at">label_alpha =</span> <span class="dv">0</span>,</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="dv">1</span>, <span class="at">lwd =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"#F4FAFE"</span>, <span class="at">high =</span> <span class="st">"#4981BF"</span>) <span class="sc">+</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="EDA_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="EDA_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="국가사무-유형" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="국가사무-유형"><span class="header-section-number">2.5.3</span> 국가사무 유형</h3>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(사무유형 <span class="sc">!=</span> <span class="st">"없음"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무유형) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(법령명, 사무유형) <span class="sc">|&gt;</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무패턴 <span class="ot">=</span> <span class="fu">str_c</span>(사무유형, <span class="at">collapse =</span> <span class="st">"; "</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무패턴, <span class="at">name =</span> <span class="st">"법령건수"</span>, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(법령건수) <span class="sc">|&gt;</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"법령건수"</span>),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_integer</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_538</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<div id="mmgjdxjdnm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+#mmgjdxjdnm table {
+  font-family: Cairo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#mmgjdxjdnm thead, #mmgjdxjdnm tbody, #mmgjdxjdnm tfoot, #mmgjdxjdnm tr, #mmgjdxjdnm td, #mmgjdxjdnm th {
+  border-style: none;
+}
+
+#mmgjdxjdnm p {
+  margin: 0;
+  padding: 0;
+}
+
+#mmgjdxjdnm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 3px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#mmgjdxjdnm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mmgjdxjdnm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mmgjdxjdnm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mmgjdxjdnm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mmgjdxjdnm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mmgjdxjdnm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mmgjdxjdnm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mmgjdxjdnm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#mmgjdxjdnm .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#mmgjdxjdnm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#mmgjdxjdnm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mmgjdxjdnm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mmgjdxjdnm .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mmgjdxjdnm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 0px;
+  border-right-color: #FFFFFF;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmgjdxjdnm .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#mmgjdxjdnm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#mmgjdxjdnm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#mmgjdxjdnm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmgjdxjdnm .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#mmgjdxjdnm .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmgjdxjdnm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mmgjdxjdnm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmgjdxjdnm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mmgjdxjdnm .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmgjdxjdnm .gt_left {
+  text-align: left;
+}
+
+#mmgjdxjdnm .gt_center {
+  text-align: center;
+}
+
+#mmgjdxjdnm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mmgjdxjdnm .gt_font_normal {
+  font-weight: normal;
+}
+
+#mmgjdxjdnm .gt_font_bold {
+  font-weight: bold;
+}
+
+#mmgjdxjdnm .gt_font_italic {
+  font-style: italic;
+}
+
+#mmgjdxjdnm .gt_super {
+  font-size: 65%;
+}
+
+#mmgjdxjdnm .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#mmgjdxjdnm .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#mmgjdxjdnm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#mmgjdxjdnm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#mmgjdxjdnm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#mmgjdxjdnm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#mmgjdxjdnm .gt_indent_5 {
+  text-indent: 25px;
+}
+
+tbody tr:last-child {
+  border-bottom: 2px solid #ffffff00;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; font-family: Chivo; font-size: 14px; vertical-align: bottom; font-weight: 200; text-transform: uppercase;" scope="col" id="사무패턴">사무패턴</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black; font-family: Chivo; font-size: 14px; vertical-align: bottom; font-weight: 200; text-transform: uppercase;" scope="col" id="법령건수">법령건수</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_1 사무패턴" class="gt_row gt_left">국가</td>
+<td headers="stub_1_1 법령건수" class="gt_row gt_right">1,742</td></tr>
+    <tr><th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_2 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구</td>
+<td headers="stub_1_2 법령건수" class="gt_row gt_right">296</td></tr>
+    <tr><th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_3 사무패턴" class="gt_row gt_left">국가; 시도</td>
+<td headers="stub_1_3 법령건수" class="gt_row gt_right">98</td></tr>
+    <tr><th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_4 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시도-시군구</td>
+<td headers="stub_1_4 법령건수" class="gt_row gt_right">85</td></tr>
+    <tr><th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_5 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_5 법령건수" class="gt_row gt_right">83</td></tr>
+    <tr><th id="stub_1_6" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_6 사무패턴" class="gt_row gt_left">국가; 시도-시군구</td>
+<td headers="stub_1_6 법령건수" class="gt_row gt_right">80</td></tr>
+    <tr><th id="stub_1_7" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_7 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_7 법령건수" class="gt_row gt_right">65</td></tr>
+    <tr><th id="stub_1_8" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_8 사무패턴" class="gt_row gt_left">국가; 시군구</td>
+<td headers="stub_1_8 법령건수" class="gt_row gt_right">56</td></tr>
+    <tr><th id="stub_1_9" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_9 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_9 법령건수" class="gt_row gt_right">47</td></tr>
+    <tr><th id="stub_1_10" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_10 사무패턴" class="gt_row gt_left">국가; 국가-시도</td>
+<td headers="stub_1_10 법령건수" class="gt_row gt_right">44</td></tr>
+    <tr><th id="stub_1_11" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_11 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_11 법령건수" class="gt_row gt_right">40</td></tr>
+    <tr><th id="stub_1_12" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_12 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시도</td>
+<td headers="stub_1_12 법령건수" class="gt_row gt_right">38</td></tr>
+    <tr><th id="stub_1_13" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_13 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시도</td>
+<td headers="stub_1_13 법령건수" class="gt_row gt_right">38</td></tr>
+    <tr><th id="stub_1_14" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_14 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시도</td>
+<td headers="stub_1_14 법령건수" class="gt_row gt_right">36</td></tr>
+    <tr><th id="stub_1_15" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_15 사무패턴" class="gt_row gt_left">시도</td>
+<td headers="stub_1_15 법령건수" class="gt_row gt_right">36</td></tr>
+    <tr><th id="stub_1_16" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_16 사무패턴" class="gt_row gt_left">국가-시도-시군구</td>
+<td headers="stub_1_16 법령건수" class="gt_row gt_right">34</td></tr>
+    <tr><th id="stub_1_17" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_17 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구</td>
+<td headers="stub_1_17 법령건수" class="gt_row gt_right">32</td></tr>
+    <tr><th id="stub_1_18" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_18 사무패턴" class="gt_row gt_left">국가; 시군구; 시도</td>
+<td headers="stub_1_18 법령건수" class="gt_row gt_right">32</td></tr>
+    <tr><th id="stub_1_19" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_19 사무패턴" class="gt_row gt_left">시도-시군구</td>
+<td headers="stub_1_19 법령건수" class="gt_row gt_right">29</td></tr>
+    <tr><th id="stub_1_20" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_20 사무패턴" class="gt_row gt_left">시군구</td>
+<td headers="stub_1_20 법령건수" class="gt_row gt_right">28</td></tr>
+    <tr><th id="stub_1_21" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_21 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시군구</td>
+<td headers="stub_1_21 법령건수" class="gt_row gt_right">27</td></tr>
+    <tr><th id="stub_1_22" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_22 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시군구; 시도-시군구</td>
+<td headers="stub_1_22 법령건수" class="gt_row gt_right">26</td></tr>
+    <tr><th id="stub_1_23" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_23 사무패턴" class="gt_row gt_left">국가; 국가-시도-시군구; 시군구; 시도</td>
+<td headers="stub_1_23 법령건수" class="gt_row gt_right">24</td></tr>
+    <tr><th id="stub_1_24" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_24 사무패턴" class="gt_row gt_left">국가; 시도; 시도-시군구</td>
+<td headers="stub_1_24 법령건수" class="gt_row gt_right">20</td></tr>
+    <tr><th id="stub_1_25" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_25 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 국가-시도-시군구; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_25 법령건수" class="gt_row gt_right">17</td></tr>
+    <tr><th id="stub_1_26" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_26 사무패턴" class="gt_row gt_left">국가-시도</td>
+<td headers="stub_1_26 법령건수" class="gt_row gt_right">16</td></tr>
+    <tr><th id="stub_1_27" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_27 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_27 법령건수" class="gt_row gt_right">16</td></tr>
+    <tr><th id="stub_1_28" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_28 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시군구; 시도</td>
+<td headers="stub_1_28 법령건수" class="gt_row gt_right">16</td></tr>
+    <tr><th id="stub_1_29" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_29 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시도-시군구</td>
+<td headers="stub_1_29 법령건수" class="gt_row gt_right">16</td></tr>
+    <tr><th id="stub_1_30" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_30 사무패턴" class="gt_row gt_left">국가; 시군구; 시도-시군구</td>
+<td headers="stub_1_30 법령건수" class="gt_row gt_right">16</td></tr>
+    <tr><th id="stub_1_31" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_31 사무패턴" class="gt_row gt_left">국가; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_31 법령건수" class="gt_row gt_right">12</td></tr>
+    <tr><th id="stub_1_32" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_32 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구; 시군구</td>
+<td headers="stub_1_32 법령건수" class="gt_row gt_right">9</td></tr>
+    <tr><th id="stub_1_33" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_33 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 시군구</td>
+<td headers="stub_1_33 법령건수" class="gt_row gt_right">9</td></tr>
+    <tr><th id="stub_1_34" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_34 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시군구</td>
+<td headers="stub_1_34 법령건수" class="gt_row gt_right">9</td></tr>
+    <tr><th id="stub_1_35" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_35 사무패턴" class="gt_row gt_left">국가; 국가-시도; 국가-시도-시군구; 시군구; 시도-시군구</td>
+<td headers="stub_1_35 법령건수" class="gt_row gt_right">9</td></tr>
+    <tr><th id="stub_1_36" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_36 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시군구; 시도</td>
+<td headers="stub_1_36 법령건수" class="gt_row gt_right">9</td></tr>
+    <tr><th id="stub_1_37" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_37 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구; 시군구; 시도</td>
+<td headers="stub_1_37 법령건수" class="gt_row gt_right">7</td></tr>
+    <tr><th id="stub_1_38" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_38 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_38 법령건수" class="gt_row gt_right">7</td></tr>
+    <tr><th id="stub_1_39" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_39 사무패턴" class="gt_row gt_left">시군구; 시도</td>
+<td headers="stub_1_39 법령건수" class="gt_row gt_right">7</td></tr>
+    <tr><th id="stub_1_40" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_40 사무패턴" class="gt_row gt_left">국가-시도; 시도</td>
+<td headers="stub_1_40 법령건수" class="gt_row gt_right">6</td></tr>
+    <tr><th id="stub_1_41" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_41 사무패턴" class="gt_row gt_left">국가-시도; 국가-시도-시군구; 시도</td>
+<td headers="stub_1_41 법령건수" class="gt_row gt_right">5</td></tr>
+    <tr><th id="stub_1_42" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_42 사무패턴" class="gt_row gt_left">국가; 국가-시군구</td>
+<td headers="stub_1_42 법령건수" class="gt_row gt_right">5</td></tr>
+    <tr><th id="stub_1_43" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_43 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구; 시군구; 시도-시군구</td>
+<td headers="stub_1_43 법령건수" class="gt_row gt_right">5</td></tr>
+    <tr><th id="stub_1_44" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_44 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시도; 시도-시군구</td>
+<td headers="stub_1_44 법령건수" class="gt_row gt_right">5</td></tr>
+    <tr><th id="stub_1_45" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_45 사무패턴" class="gt_row gt_left">국가-시도-시군구; 시군구</td>
+<td headers="stub_1_45 법령건수" class="gt_row gt_right">4</td></tr>
+    <tr><th id="stub_1_46" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_46 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 국가-시도-시군구; 시군구; 시도</td>
+<td headers="stub_1_46 법령건수" class="gt_row gt_right">4</td></tr>
+    <tr><th id="stub_1_47" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_47 사무패턴" class="gt_row gt_left">시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_47 법령건수" class="gt_row gt_right">4</td></tr>
+    <tr><th id="stub_1_48" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_48 사무패턴" class="gt_row gt_left">국가-시도-시군구; 시도</td>
+<td headers="stub_1_48 법령건수" class="gt_row gt_right">3</td></tr>
+    <tr><th id="stub_1_49" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_49 사무패턴" class="gt_row gt_left">국가-시도-시군구; 시도-시군구</td>
+<td headers="stub_1_49 법령건수" class="gt_row gt_right">3</td></tr>
+    <tr><th id="stub_1_50" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_50 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 시군구; 시도-시군구</td>
+<td headers="stub_1_50 법령건수" class="gt_row gt_right">3</td></tr>
+    <tr><th id="stub_1_51" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_51 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시도-시군구</td>
+<td headers="stub_1_51 법령건수" class="gt_row gt_right">3</td></tr>
+    <tr><th id="stub_1_52" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_52 사무패턴" class="gt_row gt_left">시군구; 시도-시군구</td>
+<td headers="stub_1_52 법령건수" class="gt_row gt_right">3</td></tr>
+    <tr><th id="stub_1_53" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_53 사무패턴" class="gt_row gt_left">시도; 시도-시군구</td>
+<td headers="stub_1_53 법령건수" class="gt_row gt_right">3</td></tr>
+    <tr><th id="stub_1_54" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_54 사무패턴" class="gt_row gt_left">국가-시군구</td>
+<td headers="stub_1_54 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_55" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_55 사무패턴" class="gt_row gt_left">국가-시도-시군구; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_55 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_56" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_56 사무패턴" class="gt_row gt_left">국가-시도; 시도-시군구</td>
+<td headers="stub_1_56 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_57" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_57 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구</td>
+<td headers="stub_1_57 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_58" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_58 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구; 시도-시군구</td>
+<td headers="stub_1_58 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_59" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_59 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 국가-시도-시군구; 시도-시군구</td>
+<td headers="stub_1_59 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_60" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_60 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 국가-시도-시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_60 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_61" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_61 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_61 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_62" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_62 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 시군구; 시도</td>
+<td headers="stub_1_62 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_63" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_63 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 시도</td>
+<td headers="stub_1_63 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_64" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_64 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시군구</td>
+<td headers="stub_1_64 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_65" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_65 사무패턴" class="gt_row gt_left">국가; 국가-시도; 시군구; 시도-시군구</td>
+<td headers="stub_1_65 법령건수" class="gt_row gt_right">2</td></tr>
+    <tr><th id="stub_1_66" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_66 사무패턴" class="gt_row gt_left">국가-시도-시군구; 시군구; 시도-시군구</td>
+<td headers="stub_1_66 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_67" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_67 사무패턴" class="gt_row gt_left">국가-시도-시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_67 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_68" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_68 사무패턴" class="gt_row gt_left">국가-시도; 국가-시도-시군구</td>
+<td headers="stub_1_68 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_69" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_69 사무패턴" class="gt_row gt_left">국가-시도; 국가-시도-시군구; 시군구</td>
+<td headers="stub_1_69 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_70" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_70 사무패턴" class="gt_row gt_left">국가-시도; 국가-시도-시군구; 시도-시군구</td>
+<td headers="stub_1_70 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_71" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_71 사무패턴" class="gt_row gt_left">국가-시도; 시군구</td>
+<td headers="stub_1_71 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_72" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_72 사무패턴" class="gt_row gt_left">국가-시도; 시군구; 시도-시군구</td>
+<td headers="stub_1_72 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_73" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_73 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도-시군구; 시도</td>
+<td headers="stub_1_73 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_74" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_74 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 국가-시도-시군구</td>
+<td headers="stub_1_74 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_75" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_75 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 국가-시도-시군구; 시도</td>
+<td headers="stub_1_75 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_76" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_76 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 시군구</td>
+<td headers="stub_1_76 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_77" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_77 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 시군구; 시도</td>
+<td headers="stub_1_77 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_78" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_78 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 국가-시도; 시도</td>
+<td headers="stub_1_78 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_79" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_79 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 시군구; 시도; 시도-시군구</td>
+<td headers="stub_1_79 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="stub_1_80" scope="row" class="gt_row gt_left gt_stub"></th>
+<td headers="stub_1_80 사무패턴" class="gt_row gt_left">국가; 국가-시군구; 시도-시군구</td>
+<td headers="stub_1_80 법령건수" class="gt_row gt_right">1</td></tr>
+    <tr><th id="grand_summary_stub_1" scope="row" class="gt_row gt_left gt_stub gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">합계</th>
+<td headers="grand_summary_stub_1 사무패턴" class="gt_row gt_left gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">—</td>
+<td headers="grand_summary_stub_1 법령건수" class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row">3,306</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 </section>
 
@@ -623,7 +3986,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":true,"closeEffect":"fade","openEffect":"fade","selector":".lightbox","descPosition":"bottom"});</script>
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"fade","loop":true,"closeEffect":"fade","selector":".lightbox"});</script>
 
 
 
