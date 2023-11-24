@@ -1,0 +1,54 @@
+---
+title: "EDA"
+editor_options: 
+  chunk_output_type: console
+---
+
+# 데이터
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
+
+law_tbl <- law_raw |>
+  janitor::clean_names(ascii = FALSE) |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) 
+  
+```
+
+# EDA
+
+## 법령명 행수
+
+```{r}
+law_tbl |> 
+  count(법령명, sort = TRUE, name = "행수") |> 
+  slice_max(행수, n = 10)
+```
+
+## 전체 사무판단 건수
+
+```{r}
+law_tbl |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |>
+  # filter(is.na(사무_판단)) |> 
+  count(사무_판단, sort = TRUE, name = "건수") |> 
+  mutate(비율 = 건수 / sum(건수)) |> 
+  janitor::adorn_totals(name = "합계")
+```
+
+
+## 전체 사무판단 건수
+
+```{r}
+law_tbl |> 
+  group_by(법령명) |> 
+  summarise(사무건수 = sum(사무_판단),
+            행수 = n()) |> 
+  arrange(사무건수) |> 
+  ggplot(aes(x = 행수, y = 사무건수)) +
+    geom_point()
+```
+

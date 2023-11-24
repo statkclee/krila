@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>법령상 사무총조사 - 법정사무 총조사</title>
+<title>법령상 사무총조사 - EDA</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -86,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="./index.html" rel="" target="">
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -102,7 +136,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">데이터</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./EDA.html" rel="" target="">
+    <a class="nav-link active" href="./EDA.html" rel="" target="" aria-current="page">
  <span class="menu-text">EDA</span></a>
   </li>  
 </ul>
@@ -122,8 +156,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">목차</h2>
    
   <ul>
-  <li><a href="#법령현황" id="toc-법령현황" class="nav-link active" data-scroll-target="#법령현황"><span class="header-section-number">1</span> 법령현황</a></li>
-  <li><a href="#사무구분" id="toc-사무구분" class="nav-link" data-scroll-target="#사무구분"><span class="header-section-number">2</span> 사무구분</a></li>
+  <li><a href="#데이터" id="toc-데이터" class="nav-link active" data-scroll-target="#데이터"><span class="header-section-number">1</span> 데이터</a></li>
+  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda"><span class="header-section-number">2</span> EDA</a>
+  <ul class="collapse">
+  <li><a href="#법령명-행수" id="toc-법령명-행수" class="nav-link" data-scroll-target="#법령명-행수"><span class="header-section-number">2.1</span> 법령명 행수</a></li>
+  <li><a href="#전체-사무판단-건수" id="toc-전체-사무판단-건수" class="nav-link" data-scroll-target="#전체-사무판단-건수"><span class="header-section-number">2.2</span> 전체 사무판단 건수</a></li>
+  <li><a href="#전체-사무판단-건수-1" id="toc-전체-사무판단-건수-1" class="nav-link" data-scroll-target="#전체-사무판단-건수-1"><span class="header-section-number">2.3</span> 전체 사무판단 건수</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -132,7 +171,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">법정사무 총조사</h1>
+<h1 class="title">EDA</h1>
 </div>
 
 
@@ -147,83 +186,91 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="법령현황" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> 법령현황</h1>
-<p>’22.5.1. 기준 중앙행정기관 소관 전체 법령(4,758개) 중 선정 제외 기준 에 따라 400개 법령 제외, 연구대상 법령은 약 <strong>4,358개</strong></p>
-<table class="table">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 62%">
-<col style="width: 5%">
-<col style="width: 23%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>구분</th>
-<th>기준</th>
-<th colspan="2">대상 | 세부구분 |</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>전체</td>
-<td><p>’22.5.1. 기준 법제처 법령정보센터에 등록된 중앙행정기관 소관 법령*</p>
-<p>- 입법부‧사법부 등 중앙행정기관이 아닌 기관이 소관하는 법령 제외 * 법령은 동일하나 소관 기관이 다수인 경우 주된 소관 기관을 대상으로 산정</p></td>
-<td>4,758개</td>
-<td><p>・1,554개 법률</p>
-<p>・1,825개 시행령</p>
-<p>・1,379개 시행규칙</p></td>
-</tr>
-<tr class="even">
-<td>제외 (400개)</td>
-<td>① 법원이 사무수행주체가 되는 규정으로 구성* * (예) 가사‧민사‧형사소송법, 비송사건절차법</td>
-<td>54개</td>
-<td>・36개 법률 ・9개 시행령 ・9개 시행규칙</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>② 조직 및 직제 구성 관련 규정으로만 구성* * (예) 국무조정실과 그 소속기관 직제</td>
-<td>174개</td>
-<td>・12개 법률 ・87개 시행령 ・75개 시행규칙</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>③ 사무처리기준 관련 규정으로만 구성* * (예) 관세부과에 관한 규칙, 행정절차법</td>
-<td>119개</td>
-<td>・16개 법률 ・32개 시행령 ・71개 시행규칙</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>④ 사법(私法)관계에 대해서만 규율* * (예) 민법, 상법, 어음법, 주택임대차보호법</td>
-<td>32개</td>
-<td>・20개 법률 ・11개 시행령 ・1개 시행규칙</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>⑤ 국가형벌권의 내용과 그 집행 방법 등 형사(刑事) 법령으로만 구성* * (예) 형법, 국내재산 도피 방지법 등</td>
-<td>21개</td>
-<td>・15개 법률 ・5개 시행령 ・1개 시행규칙</td>
-</tr>
-<tr class="odd">
-<td>검토 대상 법령</td>
-<td>’22.5월 현행 법령 중 중앙행정기관, 지방 자치단체를 사무수행주체로 규정하는 법령</td>
-<td>4,358개</td>
-<td>・1,455개 법률 ・1,681개 시행령 ・1,222개 시행규칙</td>
-</tr>
-</tbody>
-</table>
+<section id="데이터" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> 데이터</h1>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>law_raw <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/(230410)최종결과표(통합본).xlsx"</span>, <span class="at">skip =</span> <span class="dv">0</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="ot">&lt;-</span> law_raw <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>(<span class="at">ascii =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무_판단 <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(사무_판단), <span class="dv">0</span>, 사무_판단)) </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 </section>
-<section id="사무구분" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> 사무구분</h1>
-<p>사무유형은 법령상 권한 및 책임이 귀속되는 주체를 기준으로 국가사무, 국가와 지방자치단체의 공동사무, 자치사무로 유형화함</p>
+<section id="eda" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> EDA</h1>
+<section id="법령명-행수" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="법령명-행수"><span class="header-section-number">2.1</span> 법령명 행수</h2>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(법령명, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"행수"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(행수, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 2</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    법령명                                    행수</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                                    &lt;int&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 자본시장과 금융투자업에 관한 법률 시행령  5590</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 조세특례제한법 시행령                     4878</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 자본시장과 금융투자업에 관한 법률         4693</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 소득세법 시행령                           3427</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 자동차관리법 시행규칙                     3372</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 조세특례제한법                            3254</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 관세법 시행령                             3141</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 산업안전보건기준에 관한 규칙              2717</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 법인세법 시행령                           2406</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 관세법                                    2365</span></span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="전체-사무판단-건수" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="전체-사무판단-건수"><span class="header-section-number">2.2</span> 전체 사무판단 건수</h2>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무_판단 <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(사무_판단), <span class="dv">0</span>, 사무_판단)) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(is.na(사무_판단)) |&gt; </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무_판단, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"건수"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(비율 <span class="ot">=</span> 건수 <span class="sc">/</span> <span class="fu">sum</span>(건수)) <span class="sc">|&gt;</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_totals</span>(<span class="at">name =</span> <span class="st">"합계"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  사무_판단   건수       비율</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          0 801689 0.93033692</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          1  60030 0.06966308</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       합계 861719 1.00000000</span></span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="전체-사무판단-건수-1" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="전체-사무판단-건수-1"><span class="header-section-number">2.3</span> 전체 사무판단 건수</h2>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(사무건수) <span class="sc">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> 행수, <span class="at">y =</span> 사무건수)) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/workflow.png" class="lightbox" title="공동사무 재산정 방식" data-gallery="quarto-lightbox-gallery-1"><img src="images/workflow.png" class="img-fluid figure-img"></a></p>
-<figcaption class="figure-caption">공동사무 재산정 방식</figcaption>
+<p><a href="EDA_files/figure-html/unnamed-chunk-4-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="EDA_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
+</div>
+</div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -576,7 +623,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"fade","selector":".lightbox","closeEffect":"fade","loop":true});</script>
+<script>var lightboxQuarto = GLightbox({"loop":true,"closeEffect":"fade","openEffect":"fade","selector":".lightbox","descPosition":"bottom"});</script>
 
 
 

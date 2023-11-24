@@ -57,6 +57,7 @@ website:
       - db_connection.qmd
       - domain.qmd        
       - data.qmd
+      - EDA.qmd      
 
 
 
