@@ -55,9 +55,18 @@ website:
       - href: index.qmd
         text: Home
       - db_connection.qmd
-      - domain.qmd        
-      - data.qmd
-      - EDA.qmd      
+      - text: "데이터분석"
+        menu:
+        - href: domain.qmd
+          text: "법령지식"
+        - href: data.qmd
+          text: "데이터"
+        - href: EDA.qmd
+          text: "EDA I"            
+        - href: EDA_adv.qmd
+          text: "EDA II"
+        - href: EDA_topic.qmd
+          text: "토픽 모형 (사무명)"
 
 
 

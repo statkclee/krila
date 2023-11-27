@@ -1,5 +1,5 @@
 ---
-title: "EDA I"
+title: "EDA II"
 editor_options: 
   chunk_output_type: console
 ---
@@ -258,26 +258,6 @@ law_tbl |>
 ```
 
 
-# 법령
-
-법령은 법률 + 시행령 + 시행규칙 + ~~행정규칙~~ 으로 구성된다.
-
-```{r}
-law_type <- law_tbl |>
-  group_by(법령명) |>
-  summarise(조문수 = n()) |> 
-  mutate(법령구분 = case_when(
-    str_detect(법령명, "법률$") ~ "법률",
-    str_detect(법령명, "시행령$") ~ "시행령",
-    str_detect(법령명, "시행규칙$") ~ "시행규칙",
-    TRUE ~ "기타"
-  )) 
-
-law_type |> 
-  count(법령구분)
-
-
-```
 
 
 

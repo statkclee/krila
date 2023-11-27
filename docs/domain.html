@@ -93,17 +93,36 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./domain.html" rel="" target="" aria-current="page">
- <span class="menu-text">기본 지식</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./data.html" rel="" target="">
- <span class="menu-text">데이터</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./db_connection.html" rel="" target="">
  <span class="menu-text">DB 연결</span></a>
   </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">데이터분석</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
+        <li>
+    <a class="dropdown-item" href="./domain.html" rel="" target="">
+ <span class="dropdown-text">법령지식</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./data.html" rel="" target="">
+ <span class="dropdown-text">데이터</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./EDA.html" rel="" target="">
+ <span class="dropdown-text">EDA I</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./EDA_adv.html" rel="" target="">
+ <span class="dropdown-text">EDA II</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./EDA_topic.html" rel="" target="">
+ <span class="dropdown-text">토픽 모형 (사무명)</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
             <div class="quarto-navbar-tools ms-auto">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="다크 모드 전환"><i class="bi"></i></a>
@@ -121,8 +140,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">목차</h2>
    
   <ul>
-  <li><a href="#코드북" id="toc-코드북" class="nav-link active" data-scroll-target="#코드북"><span class="header-section-number">1</span> 코드북</a></li>
-  <li><a href="#개-부-3개-처-19개-청" id="toc-개-부-3개-처-19개-청" class="nav-link" data-scroll-target="#개-부-3개-처-19개-청"><span class="header-section-number">2</span> 19개 부, 3개 처, 19개 청</a></li>
+  <li><a href="#법령" id="toc-법령" class="nav-link active" data-scroll-target="#법령"><span class="header-section-number">1</span> 법령</a></li>
+  <li><a href="#법령체계" id="toc-법령체계" class="nav-link" data-scroll-target="#법령체계"><span class="header-section-number">2</span> 법령체계</a></li>
+  <li><a href="#코드북" id="toc-코드북" class="nav-link" data-scroll-target="#코드북"><span class="header-section-number">3</span> 코드북</a></li>
+  <li><a href="#개-부-3개-처-19개-청" id="toc-개-부-3개-처-19개-청" class="nav-link" data-scroll-target="#개-부-3개-처-19개-청"><span class="header-section-number">4</span> 19개 부, 3개 처, 19개 청</a></li>
   </ul>
 </nav>
     </div>
@@ -146,13 +167,115 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="코드북" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> 코드북</h1>
+<section id="법령" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> 법령</h1>
+<p>대한민국의 법률 체계는 체계적이고 질서 있는 법률 문서를 작성하기 위하여 여러 단계로 나뉘어져 있다. 이러한 구성은 법률의 내용을 이해하고 찾아보기 쉽게 하기 위함이다. 다음은 법률 체계의 주요 구성 요소와 설명이다.</p>
+<ol type="1">
+<li><p><strong>편(編)</strong>: 법률이나 규칙을 큰 주제별로 나눈 부분으로, 법률의 전체적인 구조에서 가장 상위에 위치한다. 각 편은 법률의 중요한 개념이나 주제를 담고 있다.</p></li>
+<li><p><strong>장(章)</strong>: 편의 하위에 위치하며, 특정 주제에 대한 세부 사항을 다룬다. 장은 편 안에서 더 세분화된 개념이나 규정들을 포함하고 있다.</p></li>
+<li><p><strong>절(節)</strong>: 장의 하위에 위치하여 더욱 구체적인 내용을 다룬다. 절은 장 안에서 개별적인 문제나 상황에 대한 구체적인 규정을 제시한다.</p></li>
+<li><p><strong>관(款)</strong>: 절의 하위 단위로서, 법률적인 세부 사항을 규정한다. 관은 특정한 사안에 대한 구체적인 규칙이나 조건을 담고 있다.</p></li>
+<li><p><strong>조(條)</strong>: 법률에서 가장 기본이 되는 단위로, 개별적인 법률 조항을 말한다. 각 조는 법률적인 명령, 금지, 규정 등을 담고 있다.</p></li>
+<li><p><strong>항(項)</strong>: 조의 내부를 더 세분화하여 구성한 부분으로, 조 내에서 특정 사항을 좀 더 상세하게 규정한다.</p></li>
+<li><p><strong>호(號)</strong>: 항의 하위에 위치하며, 보다 상세한 사항이나 목록을 나열할 때 사용된다. 호는 세부적인 사항을 열거하는 형태를 띈다.</p></li>
+<li><p><strong>목(目)</strong>: 호의 하위에 위치하여, 최소 단위의 세부 사항을 명시한다. 목은 특히 복잡한 조항 내에서 세부적인 사항을 구분할 때 사용된다.</p></li>
+</ol>
+<p>이러한 계층적 구조는 법률을 체계적으로 분류하고 조직화하여, 사용자가 필요한 정보를 쉽게 찾고 이해할 수 있도록 돕는다. 법률의 각 구성 요소는 법의 적용과 해석에 있어서 중요한 역할을 한다.</p>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">구분</th>
+<th style="text-align: center;">조문표시</th>
+<th style="text-align: center;">읽는법</th>
+<th style="text-align: center;">영문</th>
+<th style="text-align: center;">법률 예제</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">편</td>
+<td style="text-align: center;">제1편</td>
+<td style="text-align: center;">제1편</td>
+<td style="text-align: center;">Part</td>
+<td style="text-align: center;">민법 제1편 총칙</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">장</td>
+<td style="text-align: center;">제1장</td>
+<td style="text-align: center;">제1장</td>
+<td style="text-align: center;">Chapter</td>
+<td style="text-align: center;">민법 제2장 인</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">절</td>
+<td style="text-align: center;">제1절</td>
+<td style="text-align: center;">제1절</td>
+<td style="text-align: center;">Section</td>
+<td style="text-align: center;">민법 제1절 법인의 성립</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">관</td>
+<td style="text-align: center;">제1관</td>
+<td style="text-align: center;">제1관</td>
+<td style="text-align: center;">Sub-section</td>
+<td style="text-align: center;">민법 제1관 법인의 종류</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">조</td>
+<td style="text-align: center;">제1조</td>
+<td style="text-align: center;">제1조</td>
+<td style="text-align: center;">Article</td>
+<td style="text-align: center;">민법 제1조 법인의 성립</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">항</td>
+<td style="text-align: center;">①, ②</td>
+<td style="text-align: center;">제1조제1항</td>
+<td style="text-align: center;">Paragraph</td>
+<td style="text-align: center;">민법 제1조제1항 법인의 성립요건</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">호</td>
+<td style="text-align: center;">1., 2.</td>
+<td style="text-align: center;">제1조제1항제1호</td>
+<td style="text-align: center;">Sub-paragraph</td>
+<td style="text-align: center;">민법 제1조제1항제1호 법인설립의 신고</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">목</td>
+<td style="text-align: center;">가., 나.</td>
+<td style="text-align: center;">제1조제1항제1호가목</td>
+<td style="text-align: center;">Clause/Item</td>
+<td style="text-align: center;">민법 제1조제1항제1호가목 설립의 이유</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="법령체계" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> 법령체계</h1>
+<p>대한민국의 법령 체계는 크게 법률, 시행령, 시행규칙, 행정규칙 등으로 구성된다. 각각의 구성 요소는 법의 위계에 따라 다음과 같이 구분된다:</p>
+<ol type="1">
+<li><p><strong>법률</strong>: 국회에서 제정하며, 가장 기본이 되는 법적 규범이다. 법률은 국가의 기본적인 질서를 설정하고, 국민의 기본권을 보장하는 등의 중요한 사항을 담고 있다.</p></li>
+<li><p><strong>시행령</strong>: 법률을 구체적으로 실현하기 위해 대통령이 국회의 동의를 받아 제정하는 규범이다. 시행령은 법률의 근거 위에 서며, 법률의 세부적인 집행 방법을 규정한다.</p></li>
+<li><p><strong>시행규칙</strong>: 법률이나 시행령에 근거하여 각 부처의 장관이 제정하는 규칙이다. 시행규칙은 그 법률 또는 시행령의 집행에 필요한 세부적인 사항을 정한다.</p></li>
+<li><p><strong>행정규칙</strong>: 행정기관이 자체적인 운영을 위해 설정하는 내부 규범으로, 외부에 대한 법적 효력은 없거나 제한적이다. 행정기관의 내부 절차, 업무 처리 방식 등을 규정한다.</p></li>
+</ol>
+<p>이러한 법령은 법의 위계와 일관성을 유지하면서, 법률에 의해 위임된 사항들을 보다 상세하게 규정하고 집행하기 위한 것이다. 법률이 가장 상위에 위치하고, 그 아래로 시행령, 시행규칙, 행정규칙의 순서로 이어진다. 각각의 법령은 상위 법령의 범위 내에서만 규정을 설정할 수 있으며, 상위 법령에 위배되지 않아야 한다.</p>
+</section>
+<section id="코드북" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> 코드북</h1>
 <p>대한민국의 정부 조직은 「정부조직법」에 따라 구성되며, 최근에 이루어진 정부 조직 개편에 따라 현재 정부는 <strong>19개 부, 3개 처, 19개 청</strong>으로 구성되어 있다. 이 조직 개편은 2023년 2월 27일에 국회 본회의를 통과하고, 2023년 2월 28일에 국무회의에서 의결된 「정부조직법」개정안에 따라 이루어졌으며, 2023년 6월에 완료되었다.</p>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 84%">
+<col style="width: 22%">
+<col style="width: 77%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -176,8 +299,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="개-부-3개-처-19개-청" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> 19개 부, 3개 처, 19개 청</h1>
+<section id="개-부-3개-처-19개-청" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> 19개 부, 3개 처, 19개 청</h1>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">정부조직도</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">대통령</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">19개 부</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">외청</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">국무총리</a></li></ul>
 <div class="tab-content">
@@ -655,7 +778,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":true,"descPosition":"bottom","closeEffect":"fade","selector":".lightbox","openEffect":"fade"});</script>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","selector":".lightbox","descPosition":"bottom","loop":true,"openEffect":"fade"});</script>
 
 
 

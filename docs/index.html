@@ -93,18 +93,33 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./db_connection.html" rel="" target="">
  <span class="menu-text">DB 연결</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./domain.html" rel="" target="">
- <span class="menu-text">기본 지식</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">데이터분석</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
+        <li>
+    <a class="dropdown-item" href="./domain.html" rel="" target="">
+ <span class="dropdown-text">법령지식</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./data.html" rel="" target="">
- <span class="menu-text">데이터</span></a>
+        <li>
+    <a class="dropdown-item" href="./data.html" rel="" target="">
+ <span class="dropdown-text">데이터</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./EDA.html" rel="" target="">
- <span class="menu-text">EDA</span></a>
+        <li>
+    <a class="dropdown-item" href="./EDA.html" rel="" target="">
+ <span class="dropdown-text">EDA I</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./EDA_adv.html" rel="" target="">
+ <span class="dropdown-text">EDA II</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./EDA_topic.html" rel="" target="">
+ <span class="dropdown-text">토픽 모형 (사무명)</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
             <div class="quarto-navbar-tools ms-auto">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="다크 모드 전환"><i class="bi"></i></a>
@@ -218,7 +233,7 @@ ul.task-list li input[type="checkbox"] {
 <p>사무유형은 법령상 권한 및 책임이 귀속되는 주체를 기준으로 국가사무, 국가와 지방자치단체의 공동사무, 자치사무로 유형화함</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/workflow.png" class="lightbox" title="공동사무 재산정 방식" data-gallery="quarto-lightbox-gallery-1"><img src="images/workflow.png" class="img-fluid figure-img"></a></p>
+<p><a href="images/workflow.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="공동사무 재산정 방식"><img src="images/workflow.png" class="img-fluid figure-img"></a></p>
 <figcaption class="figure-caption">공동사무 재산정 방식</figcaption>
 </figure>
 </div>
@@ -576,7 +591,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"fade","closeEffect":"fade","loop":true,"selector":".lightbox","descPosition":"bottom"});</script>
+<script>var lightboxQuarto = GLightbox({"openEffect":"fade","descPosition":"bottom","closeEffect":"fade","selector":".lightbox","loop":true});</script>
 
 
 

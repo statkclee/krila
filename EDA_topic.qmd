@@ -1,0 +1,180 @@
+---
+title: "토픽 모형 (사무명)"
+editor_options: 
+  chunk_output_type: console
+---
+
+# 데이터
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(gt)
+
+law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
+
+law_tbl <- law_raw |>
+  janitor::clean_names(ascii = FALSE) |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |> 
+  mutate(사무유형 = str_remove(사무유형, "\r\n")) |>
+  # 사무유형: 국가, 시도, 공동, ...
+  mutate(사무유형 = case_when(사무유형 == "국가시도" ~ "국가-시도",
+                              사무유형 == "정부" ~ "국가",
+                              사무유형 == "공동" ~ "국가-시도",
+                              is.na(사무유형) ~ "없음",
+                              TRUE ~ 사무유형))  |> 
+  rename(부처명 = 소관_부처명)
+
+```  
+
+
+
+# EDA
+
+## 전체 사무명
+
+```{r}
+# 필요한 패키지 로드
+library(tidytext)
+library(wordcloud2)
+library(bitNLP)
+
+affairs_tbl <- law_tbl |>
+  filter(!is.na(사무명)) |> 
+  select(부처명, 수행주체, 사무명)
+
+affairs_tbl |> 
+  slice_sample(prop = 0.1) |>
+  pull(사무명) |> 
+  morpho_mecab(indiv = FALSE) %>% 
+  table() %>% 
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare", size = 0.36)
+```
+
+
+## 수행 주체
+
+```{r}
+affairs_tbl |> 
+  count(수행주체, sort = TRUE, name = "건수") |> 
+  mutate(비율 = 건수 / sum(건수),
+         누적건수 = cumsum(건수),
+         누적비율 = 누적건수 / sum(건수)) |> 
+  slice(1:20) |> 
+  gt() |>
+  tab_header(title = "수행주체별 사무명 상위 20 건수") |>
+  fmt_number(columns = c(건수, 누적건수), decimals = 0) |>
+  fmt_percent(columns = c(비율, 누적비율), decimals = 1) |> 
+  cols_align("center") |> 
+  gt::tab_spanner(
+    label =  gt::md("**사무건수**"),
+    columns = c(건수, 비율)
+  ) |> 
+  gt::tab_spanner(
+    label =  gt::md("**누적건수**"),
+    columns = c(누적건수, 누적비율)
+  ) |> 
+  gtExtras::gt_theme_538()
+```
+
+
+### 환경부 {.unnumbered}
+
+```{r}
+affairs_tbl |> 
+  filter(수행주체 == "환경부장관") |> 
+  pull(사무명) |> 
+  morpho_mecab(indiv = FALSE) %>% 
+  table() %>% 
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare", size = 0.36)  
+```
+
+### 국토교통부 {.unnumbered}
+
+```{r}
+affairs_tbl |> 
+  filter(수행주체 == "국토교통부장관") |> 
+  pull(사무명) |> 
+  morpho_mecab(indiv = FALSE) %>% 
+  table() %>% 
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare")  
+```
+
+### 보건복지부 {.unnumbered}
+
+```{r}
+affairs_tbl |> 
+  filter(수행주체 == "보건복지부장관") |> 
+  pull(사무명) |> 
+  morpho_mecab(indiv = FALSE) %>% 
+  table() %>% 
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare")  
+```
+
+### 금융위원회 {.unnumbered}
+
+```{r}
+affairs_tbl |> 
+  filter(수행주체 == "금융위원회") |> 
+  pull(사무명) |> 
+  morpho_mecab(indiv = FALSE) %>% 
+  table() %>% 
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare")  
+```
+
+### 과학기술정보통신부   {.unnumbered}
+
+```{r}
+affairs_tbl |> 
+  filter(수행주체 == "과학기술정보통신부장관") |> 
+  pull(사무명) |> 
+  morpho_mecab(indiv = FALSE) %>% 
+  table() %>% 
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare")  
+```
+
+# 토픽 모형
+
+
+```{r}
+#| eval: false
+# 필요한 패키지 로드
+library(tidytext)
+library(stm)
+
+affairs_tbl <- law_tbl |>
+  filter(!is.na(사무명)) |> 
+  select(부처명, 수행주체, 사무명)
+
+
+# tidytext를 사용해 토큰화
+tidy_texts <- texts_df %>%
+  unnest_tokens(word, text)
+
+# 불용어 제거
+data("stop_words")
+tidy_texts <- tidy_texts %>%
+  anti_join(stop_words, by = "word")
+
+# Document-Term Matrix 생성
+dtm <- tidy_texts %>%
+  count(line, word) %>%
+  cast_dtm(line, word, n)
+
+# LDA 모델 생성 및 적합
+lda_model <- LDA(dtm, k = 10)  # k는 토픽의 수
+
+# 결과 추출
+topics <- tidy(lda_model, matrix = "beta")
+
+# 각 토픽의 상위 단어 추출
+top_terms <- topics %>%
+  group_by(topic) %>%
+  top_n(10, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+# 결과 출력
+top_terms
+```
+

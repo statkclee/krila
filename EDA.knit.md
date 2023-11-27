@@ -1,270 +1,71 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ko-KR" xml:lang="ko-KR"><head>
-
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+---
+title: "EDA I"
+editor_options: 
+  chunk_output_type: console
+---
 
 
-<title>법령상 사무총조사 - EDA I</title>
-<style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-  width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-  vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-</style>
+# 데이터
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
-<script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
-  "copy-button": false,
-  "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "overlay",
-  "limit": 20,
-  "language": {
-    "search-no-results-text": "일치 없음",
-    "search-matching-documents-text": "일치된 문서",
-    "search-copy-link-title": "검색 링크 복사",
-    "search-hide-matches-text": "추가 검색 결과 숨기기",
-    "search-more-match-text": "추가 검색결과",
-    "search-more-matches-text": "추가 검색결과",
-    "search-clear-button-title": "제거",
-    "search-detached-cancel-button-title": "취소",
-    "search-submit-button-title": "검색",
-    "search-label": "검색"
-  }
-}</script>
+::: {.cell}
 
+```{.r .cell-code}
+library(tidyverse)
+library(readxl)
 
-</head>
+law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
 
-<body class="nav-fixed">
-
-<div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">법령상 사무총조사</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="검색"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
- <span class="menu-text">Home</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./db_connection.html" rel="" target="">
- <span class="menu-text">DB 연결</span></a>
-  </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">데이터분석</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
-        <li>
-    <a class="dropdown-item" href="./domain.html" rel="" target="">
- <span class="dropdown-text">법령지식</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./data.html" rel="" target="">
- <span class="dropdown-text">데이터</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./EDA.html" rel="" target="">
- <span class="dropdown-text">EDA I</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./EDA_adv.html" rel="" target="">
- <span class="dropdown-text">EDA II</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./EDA_topic.html" rel="" target="">
- <span class="dropdown-text">토픽 모형 (사무명)</span></a>
-  </li>  
-    </ul>
-  </li>
-</ul>
-            <div class="quarto-navbar-tools ms-auto">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="다크 모드 전환"><i class="bi"></i></a>
-</div>
-          </div> <!-- /navcollapse -->
-      </div> <!-- /container-fluid -->
-    </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
-<!-- sidebar -->
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">목차</h2>
-   
-  <ul>
-  <li><a href="#데이터" id="toc-데이터" class="nav-link active" data-scroll-target="#데이터"><span class="header-section-number">1</span> 데이터</a></li>
-  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda"><span class="header-section-number">2</span> EDA</a>
-  <ul class="collapse">
-  <li><a href="#법령명-행수" id="toc-법령명-행수" class="nav-link" data-scroll-target="#법령명-행수"><span class="header-section-number">2.1</span> 법령명 행수</a></li>
-  <li><a href="#사무판단-건수" id="toc-사무판단-건수" class="nav-link" data-scroll-target="#사무판단-건수"><span class="header-section-number">2.2</span> 사무판단 건수</a></li>
-  <li><a href="#사무판단-건수와-행수" id="toc-사무판단-건수와-행수" class="nav-link" data-scroll-target="#사무판단-건수와-행수"><span class="header-section-number">2.3</span> 사무판단 건수와 행수</a></li>
-  <li><a href="#행수분포와-사무판단" id="toc-행수분포와-사무판단" class="nav-link" data-scroll-target="#행수분포와-사무판단"><span class="header-section-number">2.4</span> 행수분포와 사무판단</a></li>
-  <li><a href="#수행주체" id="toc-수행주체" class="nav-link" data-scroll-target="#수행주체"><span class="header-section-number">2.5</span> 수행주체</a>
-  <ul class="collapse">
-  <li><a href="#조문-기준" id="toc-조문-기준" class="nav-link" data-scroll-target="#조문-기준"><span class="header-section-number">2.5.1</span> 조문 기준</a></li>
-  <li><a href="#법령-기준" id="toc-법령-기준" class="nav-link" data-scroll-target="#법령-기준"><span class="header-section-number">2.5.2</span> 법령 기준</a></li>
-  <li><a href="#국가사무-유형" id="toc-국가사무-유형" class="nav-link" data-scroll-target="#국가사무-유형"><span class="header-section-number">2.5.3</span> 국가사무 유형</a></li>
-  </ul></li>
-  </ul></li>
-  <li><a href="#법령" id="toc-법령" class="nav-link" data-scroll-target="#법령"><span class="header-section-number">3</span> 법령</a></li>
-  </ul>
-</nav>
-    </div>
-<!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">EDA I</h1>
-</div>
+law_tbl <- law_raw |>
+  janitor::clean_names(ascii = FALSE) |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |> 
+  mutate(사무유형 = str_remove(사무유형, "\r\n")) |>
+  # 사무유형: 국가, 시도, 공동, ...
+  mutate(사무유형 = case_when(사무유형 == "국가시도" ~ "국가-시도",
+                              사무유형 == "정부" ~ "국가",
+                              사무유형 == "공동" ~ "국가-시도",
+                              is.na(사무유형) ~ "없음",
+                              TRUE ~ 사무유형))  
+```
+:::
 
 
 
-<div class="quarto-title-meta">
+# EDA
 
-    
-  
-    
-  </div>
-  
+## 법령명 행수
 
-</header>
 
-<section id="데이터" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> 데이터</h1>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>law_raw <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/(230410)최종결과표(통합본).xlsx"</span>, <span class="at">skip =</span> <span class="dv">0</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="ot">&lt;-</span> law_raw <span class="sc">|&gt;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>(<span class="at">ascii =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무_판단 <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(사무_판단), <span class="dv">0</span>, 사무_판단)) <span class="sc">|&gt;</span> </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무유형 <span class="ot">=</span> <span class="fu">str_remove</span>(사무유형, <span class="st">"</span><span class="sc">\r\n</span><span class="st">"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 사무유형: 국가, 시도, 공동, ...</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무유형 <span class="ot">=</span> <span class="fu">case_when</span>(사무유형 <span class="sc">==</span> <span class="st">"국가시도"</span> <span class="sc">~</span> <span class="st">"국가-시도"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                              사무유형 <span class="sc">==</span> <span class="st">"정부"</span> <span class="sc">~</span> <span class="st">"국가"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                              사무유형 <span class="sc">==</span> <span class="st">"공동"</span> <span class="sc">~</span> <span class="st">"국가-시도"</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">is.na</span>(사무유형) <span class="sc">~</span> <span class="st">"없음"</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                              <span class="cn">TRUE</span> <span class="sc">~</span> 사무유형))  </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="eda" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> EDA</h1>
-<section id="법령명-행수" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="법령명-행수"><span class="header-section-number">2.1</span> 법령명 행수</h2>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(법령명, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"행수"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(행수, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+::: {.cell}
 
-<div id="nrqeqovkkn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#nrqeqovkkn table {
+```{.r .cell-code}
+library(gt)
+
+law_tbl |> 
+  count(법령명, sort = TRUE, name = "행수") |> 
+  slice_max(행수, n = 10) |> 
+  gt()
+```
+
+::: {.cell-output-display}
+```{=html}
+<div id="tttknlxeyj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tttknlxeyj table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#nrqeqovkkn thead, #nrqeqovkkn tbody, #nrqeqovkkn tfoot, #nrqeqovkkn tr, #nrqeqovkkn td, #nrqeqovkkn th {
+#tttknlxeyj thead, #tttknlxeyj tbody, #tttknlxeyj tfoot, #tttknlxeyj tr, #tttknlxeyj td, #tttknlxeyj th {
   border-style: none;
 }
 
-#nrqeqovkkn p {
+#tttknlxeyj p {
   margin: 0;
   padding: 0;
 }
 
-#nrqeqovkkn .gt_table {
+#tttknlxeyj .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -290,12 +91,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_caption {
+#tttknlxeyj .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#nrqeqovkkn .gt_title {
+#tttknlxeyj .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -307,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#nrqeqovkkn .gt_subtitle {
+#tttknlxeyj .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -319,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#nrqeqovkkn .gt_heading {
+#tttknlxeyj .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -331,13 +132,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_bottom_border {
+#tttknlxeyj .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_col_headings {
+#tttknlxeyj .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -352,7 +153,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_col_heading {
+#tttknlxeyj .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -372,7 +173,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#nrqeqovkkn .gt_column_spanner_outer {
+#tttknlxeyj .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -384,15 +185,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#nrqeqovkkn .gt_column_spanner_outer:first-child {
+#tttknlxeyj .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#nrqeqovkkn .gt_column_spanner_outer:last-child {
+#tttknlxeyj .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#nrqeqovkkn .gt_column_spanner {
+#tttknlxeyj .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -404,11 +205,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#nrqeqovkkn .gt_spanner_row {
+#tttknlxeyj .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#nrqeqovkkn .gt_group_heading {
+#tttknlxeyj .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -434,7 +235,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#nrqeqovkkn .gt_empty_group_heading {
+#tttknlxeyj .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -449,15 +250,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#nrqeqovkkn .gt_from_md > :first-child {
+#tttknlxeyj .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#nrqeqovkkn .gt_from_md > :last-child {
+#tttknlxeyj .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#nrqeqovkkn .gt_row {
+#tttknlxeyj .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -476,7 +277,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#nrqeqovkkn .gt_stub {
+#tttknlxeyj .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -489,7 +290,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#nrqeqovkkn .gt_stub_row_group {
+#tttknlxeyj .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -503,15 +304,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#nrqeqovkkn .gt_row_group_first td {
+#tttknlxeyj .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#nrqeqovkkn .gt_row_group_first th {
+#tttknlxeyj .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#nrqeqovkkn .gt_summary_row {
+#tttknlxeyj .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -521,16 +322,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#nrqeqovkkn .gt_first_summary_row {
+#tttknlxeyj .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_first_summary_row.thick {
+#tttknlxeyj .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#nrqeqovkkn .gt_last_summary_row {
+#tttknlxeyj .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -540,7 +341,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_grand_summary_row {
+#tttknlxeyj .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -550,7 +351,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#nrqeqovkkn .gt_first_grand_summary_row {
+#tttknlxeyj .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -560,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_last_grand_summary_row_top {
+#tttknlxeyj .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -570,11 +371,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_striped {
+#tttknlxeyj .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#nrqeqovkkn .gt_table_body {
+#tttknlxeyj .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -583,7 +384,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_footnotes {
+#tttknlxeyj .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -597,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_footnote {
+#tttknlxeyj .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -606,7 +407,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#nrqeqovkkn .gt_sourcenotes {
+#tttknlxeyj .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -620,7 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#nrqeqovkkn .gt_sourcenote {
+#tttknlxeyj .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -628,63 +429,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#nrqeqovkkn .gt_left {
+#tttknlxeyj .gt_left {
   text-align: left;
 }
 
-#nrqeqovkkn .gt_center {
+#tttknlxeyj .gt_center {
   text-align: center;
 }
 
-#nrqeqovkkn .gt_right {
+#tttknlxeyj .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#nrqeqovkkn .gt_font_normal {
+#tttknlxeyj .gt_font_normal {
   font-weight: normal;
 }
 
-#nrqeqovkkn .gt_font_bold {
+#tttknlxeyj .gt_font_bold {
   font-weight: bold;
 }
 
-#nrqeqovkkn .gt_font_italic {
+#tttknlxeyj .gt_font_italic {
   font-style: italic;
 }
 
-#nrqeqovkkn .gt_super {
+#tttknlxeyj .gt_super {
   font-size: 65%;
 }
 
-#nrqeqovkkn .gt_footnote_marks {
+#tttknlxeyj .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#nrqeqovkkn .gt_asterisk {
+#tttknlxeyj .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#nrqeqovkkn .gt_indent_1 {
+#tttknlxeyj .gt_indent_1 {
   text-indent: 5px;
 }
 
-#nrqeqovkkn .gt_indent_2 {
+#tttknlxeyj .gt_indent_2 {
   text-indent: 10px;
 }
 
-#nrqeqovkkn .gt_indent_3 {
+#tttknlxeyj .gt_indent_3 {
   text-indent: 15px;
 }
 
-#nrqeqovkkn .gt_indent_4 {
+#tttknlxeyj .gt_indent_4 {
   text-indent: 20px;
 }
 
-#nrqeqovkkn .gt_indent_5 {
+#tttknlxeyj .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -722,44 +523,48 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
 </table>
 </div>
-</div>
-</div>
-</section>
-<section id="사무판단-건수" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="사무판단-건수"><span class="header-section-number">2.2</span> 사무판단 건수</h2>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무_판단 <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(사무_판단), <span class="dv">0</span>, 사무_판단)) <span class="sc">|&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(is.na(사무_판단)) |&gt; </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무_판단, <span class="at">sort =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"건수"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(비율 <span class="ot">=</span> 건수 <span class="sc">/</span> <span class="fu">sum</span>(건수)) <span class="sc">|&gt;</span> </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_totals</span>(<span class="at">name =</span> <span class="st">"합계"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="st">"center"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(건수) <span class="sc">|&gt;</span> </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(비율, <span class="at">decimals =</span> <span class="dv">1</span>)</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+```
+:::
+:::
 
-<div id="sypsfocggw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sypsfocggw table {
+
+## 사무판단 건수
+
+
+::: {.cell}
+
+```{.r .cell-code}
+law_tbl |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |>
+  # filter(is.na(사무_판단)) |> 
+  count(사무_판단, sort = TRUE, name = "건수") |> 
+  mutate(비율 = 건수 / sum(건수)) |> 
+  janitor::adorn_totals(name = "합계") |> 
+  gt() |> 
+  cols_align("center") |> 
+  fmt_integer(건수) |> 
+  fmt_percent(비율, decimals = 1)
+```
+
+::: {.cell-output-display}
+```{=html}
+<div id="ywivcfsykk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ywivcfsykk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#sypsfocggw thead, #sypsfocggw tbody, #sypsfocggw tfoot, #sypsfocggw tr, #sypsfocggw td, #sypsfocggw th {
+#ywivcfsykk thead, #ywivcfsykk tbody, #ywivcfsykk tfoot, #ywivcfsykk tr, #ywivcfsykk td, #ywivcfsykk th {
   border-style: none;
 }
 
-#sypsfocggw p {
+#ywivcfsykk p {
   margin: 0;
   padding: 0;
 }
 
-#sypsfocggw .gt_table {
+#ywivcfsykk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -785,12 +590,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_caption {
+#ywivcfsykk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#sypsfocggw .gt_title {
+#ywivcfsykk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -802,7 +607,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#sypsfocggw .gt_subtitle {
+#ywivcfsykk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -814,7 +619,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#sypsfocggw .gt_heading {
+#ywivcfsykk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -826,13 +631,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_bottom_border {
+#ywivcfsykk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_col_headings {
+#ywivcfsykk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -847,7 +652,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_col_heading {
+#ywivcfsykk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -867,7 +672,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#sypsfocggw .gt_column_spanner_outer {
+#ywivcfsykk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -879,15 +684,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#sypsfocggw .gt_column_spanner_outer:first-child {
+#ywivcfsykk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#sypsfocggw .gt_column_spanner_outer:last-child {
+#ywivcfsykk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#sypsfocggw .gt_column_spanner {
+#ywivcfsykk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -899,11 +704,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#sypsfocggw .gt_spanner_row {
+#ywivcfsykk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#sypsfocggw .gt_group_heading {
+#ywivcfsykk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -929,7 +734,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#sypsfocggw .gt_empty_group_heading {
+#ywivcfsykk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -944,15 +749,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#sypsfocggw .gt_from_md > :first-child {
+#ywivcfsykk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#sypsfocggw .gt_from_md > :last-child {
+#ywivcfsykk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#sypsfocggw .gt_row {
+#ywivcfsykk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -971,7 +776,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#sypsfocggw .gt_stub {
+#ywivcfsykk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -984,7 +789,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#sypsfocggw .gt_stub_row_group {
+#ywivcfsykk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -998,15 +803,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#sypsfocggw .gt_row_group_first td {
+#ywivcfsykk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#sypsfocggw .gt_row_group_first th {
+#ywivcfsykk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#sypsfocggw .gt_summary_row {
+#ywivcfsykk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1016,16 +821,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#sypsfocggw .gt_first_summary_row {
+#ywivcfsykk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_first_summary_row.thick {
+#ywivcfsykk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#sypsfocggw .gt_last_summary_row {
+#ywivcfsykk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1035,7 +840,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_grand_summary_row {
+#ywivcfsykk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1045,7 +850,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#sypsfocggw .gt_first_grand_summary_row {
+#ywivcfsykk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1055,7 +860,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_last_grand_summary_row_top {
+#ywivcfsykk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1065,11 +870,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_striped {
+#ywivcfsykk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#sypsfocggw .gt_table_body {
+#ywivcfsykk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1078,7 +883,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_footnotes {
+#ywivcfsykk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1092,7 +897,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_footnote {
+#ywivcfsykk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1101,7 +906,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#sypsfocggw .gt_sourcenotes {
+#ywivcfsykk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1115,7 +920,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#sypsfocggw .gt_sourcenote {
+#ywivcfsykk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1123,63 +928,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#sypsfocggw .gt_left {
+#ywivcfsykk .gt_left {
   text-align: left;
 }
 
-#sypsfocggw .gt_center {
+#ywivcfsykk .gt_center {
   text-align: center;
 }
 
-#sypsfocggw .gt_right {
+#ywivcfsykk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#sypsfocggw .gt_font_normal {
+#ywivcfsykk .gt_font_normal {
   font-weight: normal;
 }
 
-#sypsfocggw .gt_font_bold {
+#ywivcfsykk .gt_font_bold {
   font-weight: bold;
 }
 
-#sypsfocggw .gt_font_italic {
+#ywivcfsykk .gt_font_italic {
   font-style: italic;
 }
 
-#sypsfocggw .gt_super {
+#ywivcfsykk .gt_super {
   font-size: 65%;
 }
 
-#sypsfocggw .gt_footnote_marks {
+#ywivcfsykk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#sypsfocggw .gt_asterisk {
+#ywivcfsykk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#sypsfocggw .gt_indent_1 {
+#ywivcfsykk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#sypsfocggw .gt_indent_2 {
+#ywivcfsykk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#sypsfocggw .gt_indent_3 {
+#ywivcfsykk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#sypsfocggw .gt_indent_4 {
+#ywivcfsykk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#sypsfocggw .gt_indent_5 {
+#ywivcfsykk .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1207,46 +1012,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
 </table>
 </div>
-</div>
-</div>
-</section>
-<section id="사무판단-건수와-행수" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="사무판단-건수와-행수"><span class="header-section-number">2.3</span> 사무판단 건수와 행수</h2>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">표</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">그래프</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(사무건수, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="st">"center"</span>) </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+```
+:::
+:::
 
-<div id="zakyrzvpco" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#zakyrzvpco table {
+
+
+## 사무판단 건수와 행수
+
+:::{.panel-tabset}
+
+### 표 {.unnumbered}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(gt)
+law_tbl |> 
+  group_by(법령명) |> 
+  summarise(사무건수 = sum(사무_판단),
+            행수 = n()) |> 
+  slice_max(사무건수, n = 10) |>
+  gt::gt() |> 
+  cols_align("center") 
+```
+
+::: {.cell-output-display}
+```{=html}
+<div id="acezwcmcum" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#acezwcmcum table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#zakyrzvpco thead, #zakyrzvpco tbody, #zakyrzvpco tfoot, #zakyrzvpco tr, #zakyrzvpco td, #zakyrzvpco th {
+#acezwcmcum thead, #acezwcmcum tbody, #acezwcmcum tfoot, #acezwcmcum tr, #acezwcmcum td, #acezwcmcum th {
   border-style: none;
 }
 
-#zakyrzvpco p {
+#acezwcmcum p {
   margin: 0;
   padding: 0;
 }
 
-#zakyrzvpco .gt_table {
+#acezwcmcum .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1272,12 +1083,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_caption {
+#acezwcmcum .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#zakyrzvpco .gt_title {
+#acezwcmcum .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1289,7 +1100,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#zakyrzvpco .gt_subtitle {
+#acezwcmcum .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1301,7 +1112,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#zakyrzvpco .gt_heading {
+#acezwcmcum .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1313,13 +1124,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_bottom_border {
+#acezwcmcum .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_col_headings {
+#acezwcmcum .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1334,7 +1145,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_col_heading {
+#acezwcmcum .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1354,7 +1165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#zakyrzvpco .gt_column_spanner_outer {
+#acezwcmcum .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1366,15 +1177,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#zakyrzvpco .gt_column_spanner_outer:first-child {
+#acezwcmcum .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zakyrzvpco .gt_column_spanner_outer:last-child {
+#acezwcmcum .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zakyrzvpco .gt_column_spanner {
+#acezwcmcum .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1386,11 +1197,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#zakyrzvpco .gt_spanner_row {
+#acezwcmcum .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#zakyrzvpco .gt_group_heading {
+#acezwcmcum .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1416,7 +1227,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#zakyrzvpco .gt_empty_group_heading {
+#acezwcmcum .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1431,15 +1242,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#zakyrzvpco .gt_from_md > :first-child {
+#acezwcmcum .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zakyrzvpco .gt_from_md > :last-child {
+#acezwcmcum .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zakyrzvpco .gt_row {
+#acezwcmcum .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1458,7 +1269,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#zakyrzvpco .gt_stub {
+#acezwcmcum .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1471,7 +1282,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#zakyrzvpco .gt_stub_row_group {
+#acezwcmcum .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1485,15 +1296,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#zakyrzvpco .gt_row_group_first td {
+#acezwcmcum .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#zakyrzvpco .gt_row_group_first th {
+#acezwcmcum .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#zakyrzvpco .gt_summary_row {
+#acezwcmcum .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1503,16 +1314,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#zakyrzvpco .gt_first_summary_row {
+#acezwcmcum .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_first_summary_row.thick {
+#acezwcmcum .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#zakyrzvpco .gt_last_summary_row {
+#acezwcmcum .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1522,7 +1333,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_grand_summary_row {
+#acezwcmcum .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1532,7 +1343,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#zakyrzvpco .gt_first_grand_summary_row {
+#acezwcmcum .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1542,7 +1353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_last_grand_summary_row_top {
+#acezwcmcum .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1552,11 +1363,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_striped {
+#acezwcmcum .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zakyrzvpco .gt_table_body {
+#acezwcmcum .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1565,7 +1376,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_footnotes {
+#acezwcmcum .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1579,7 +1390,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_footnote {
+#acezwcmcum .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1588,7 +1399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#zakyrzvpco .gt_sourcenotes {
+#acezwcmcum .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1602,7 +1413,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#zakyrzvpco .gt_sourcenote {
+#acezwcmcum .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1610,63 +1421,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#zakyrzvpco .gt_left {
+#acezwcmcum .gt_left {
   text-align: left;
 }
 
-#zakyrzvpco .gt_center {
+#acezwcmcum .gt_center {
   text-align: center;
 }
 
-#zakyrzvpco .gt_right {
+#acezwcmcum .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zakyrzvpco .gt_font_normal {
+#acezwcmcum .gt_font_normal {
   font-weight: normal;
 }
 
-#zakyrzvpco .gt_font_bold {
+#acezwcmcum .gt_font_bold {
   font-weight: bold;
 }
 
-#zakyrzvpco .gt_font_italic {
+#acezwcmcum .gt_font_italic {
   font-style: italic;
 }
 
-#zakyrzvpco .gt_super {
+#acezwcmcum .gt_super {
   font-size: 65%;
 }
 
-#zakyrzvpco .gt_footnote_marks {
+#acezwcmcum .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#zakyrzvpco .gt_asterisk {
+#acezwcmcum .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#zakyrzvpco .gt_indent_1 {
+#acezwcmcum .gt_indent_1 {
   text-indent: 5px;
 }
 
-#zakyrzvpco .gt_indent_2 {
+#acezwcmcum .gt_indent_2 {
   text-indent: 10px;
 }
 
-#zakyrzvpco .gt_indent_3 {
+#acezwcmcum .gt_indent_3 {
   text-indent: 15px;
 }
 
-#zakyrzvpco .gt_indent_4 {
+#acezwcmcum .gt_indent_4 {
   text-indent: 20px;
 }
 
-#zakyrzvpco .gt_indent_5 {
+#acezwcmcum .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1715,116 +1526,119 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
 </table>
 </div>
-</div>
-</div>
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(사무건수) <span class="sc">|&gt;</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> 행수, <span class="at">y =</span> 사무건수)) <span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="EDA_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="EDA_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="행수분포와-사무판단" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="행수분포와-사무판단"><span class="header-section-number">2.4</span> 행수분포와 사무판단</h2>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무건수 <span class="ot">=</span> <span class="fu">sum</span>(사무_판단),</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            행수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무판단 <span class="ot">=</span> <span class="fu">ifelse</span>(사무건수 <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"사무없음"</span>, <span class="st">"사무있음"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> 행수, <span class="at">fill =</span> 사무판단)) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_sqrt</span>() </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="EDA_files/figure-html/unnamed-chunk-6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="EDA_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="수행주체" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="수행주체"><span class="header-section-number">2.5</span> 수행주체</h2>
-<section id="조문-기준" class="level3" data-number="2.5.1">
-<h3 data-number="2.5.1" class="anchored" data-anchor-id="조문-기준"><span class="header-section-number">2.5.1</span> 조문 기준</h3>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtExtras)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(중앙지자체 <span class="ot">=</span> <span class="fu">case_when</span>(사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"국가"</span>) <span class="sc">~</span> <span class="st">"중앙정부"</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                                사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"시도"</span>, <span class="st">"시도-시군구"</span>, <span class="st">"시군구"</span>) <span class="sc">~</span> <span class="st">"지자체"</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                                <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"공동"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(사무유형 <span class="sc">!=</span> <span class="st">"없음"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(중앙지자체, 사무유형, <span class="at">name =</span> <span class="st">"건수"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(비율 <span class="ot">=</span> 건수 <span class="sc">/</span> <span class="fu">sum</span>(건수)) <span class="sc">|&gt;</span> </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>(<span class="at">groupname_col =</span> <span class="st">"중앙지자체"</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">rowname_col   =</span> <span class="st">"사무유형"</span>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(비율, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(건수) <span class="sc">|&gt;</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"건수"</span>),</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_integer</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"비율"</span>),</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_percent,</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">0</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_538</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+```
+:::
+:::
 
-<div id="ikwtzkmpzz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+
+### 그래프 {.unnumbered}
+
+
+::: {.cell}
+
+```{.r .cell-code}
+
+law_tbl |> 
+  group_by(법령명) |> 
+  summarise(사무건수 = sum(사무_판단),
+            행수 = n()) |> 
+  arrange(사무건수) |> 
+  ggplot(aes(x = 행수, y = 사무건수)) +
+    geom_point() 
+```
+
+::: {.cell-output-display}
+![](EDA_files/figure-html/unnamed-chunk-5-1.png){width=672}
+:::
+:::
+
+
+:::
+
+
+## 행수분포와 사무판단
+
+
+::: {.cell}
+
+```{.r .cell-code}
+law_tbl |> 
+  group_by(법령명) |> 
+  summarise(사무건수 = sum(사무_판단),
+            행수 = n()) |> 
+  mutate(사무판단 = ifelse(사무건수 == 0, "사무없음", "사무있음")) |> 
+  ggplot(aes(x = 행수, fill = 사무판단)) +
+    geom_density(alpha = 0.7) +
+    theme(legend.position = "bottom") +
+    scale_x_sqrt() 
+```
+
+::: {.cell-output-display}
+![](EDA_files/figure-html/unnamed-chunk-6-1.png){width=672}
+:::
+:::
+
+
+## 수행주체
+
+### 조문 기준
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(gtExtras)
+
+law_tbl |>
+  mutate(중앙지자체 = case_when(사무유형 %in% c("국가") ~ "중앙정부",
+                                사무유형 %in% c("시도", "시도-시군구", "시군구") ~ "지자체",
+                                TRUE ~ "공동")) |>
+  filter(사무유형 != "없음") |> 
+  count(중앙지자체, 사무유형, name = "건수") |>
+  mutate(비율 = 건수 / sum(건수)) |> 
+  gt(groupname_col = "중앙지자체",
+     rowname_col   = "사무유형"  ) |> 
+  fmt_percent(비율, decimals = 1) |>
+  fmt_integer(건수) |>
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("건수"),
+    formatter = fmt_integer
+  ) |> 
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("비율"),
+    formatter = fmt_percent,
+    decimals = 0
+  ) |> 
+  gt_theme_538()
+```
+
+::: {.cell-output-display}
+```{=html}
+<div id="fhvlmxkujn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cairo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#ikwtzkmpzz table {
+#fhvlmxkujn table {
   font-family: Cairo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ikwtzkmpzz thead, #ikwtzkmpzz tbody, #ikwtzkmpzz tfoot, #ikwtzkmpzz tr, #ikwtzkmpzz td, #ikwtzkmpzz th {
+#fhvlmxkujn thead, #fhvlmxkujn tbody, #fhvlmxkujn tfoot, #fhvlmxkujn tr, #fhvlmxkujn td, #fhvlmxkujn th {
   border-style: none;
 }
 
-#ikwtzkmpzz p {
+#fhvlmxkujn p {
   margin: 0;
   padding: 0;
 }
 
-#ikwtzkmpzz .gt_table {
+#fhvlmxkujn .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1850,12 +1664,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_caption {
+#fhvlmxkujn .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ikwtzkmpzz .gt_title {
+#fhvlmxkujn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1867,7 +1681,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#ikwtzkmpzz .gt_subtitle {
+#fhvlmxkujn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1879,7 +1693,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#ikwtzkmpzz .gt_heading {
+#fhvlmxkujn .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -1891,13 +1705,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_bottom_border {
+#fhvlmxkujn .gt_bottom_border {
   border-bottom-style: none;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_col_headings {
+#fhvlmxkujn .gt_col_headings {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1912,7 +1726,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_col_heading {
+#fhvlmxkujn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1932,7 +1746,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ikwtzkmpzz .gt_column_spanner_outer {
+#fhvlmxkujn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1944,15 +1758,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#ikwtzkmpzz .gt_column_spanner_outer:first-child {
+#fhvlmxkujn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ikwtzkmpzz .gt_column_spanner_outer:last-child {
+#fhvlmxkujn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ikwtzkmpzz .gt_column_spanner {
+#fhvlmxkujn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #000000;
@@ -1964,11 +1778,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#ikwtzkmpzz .gt_spanner_row {
+#fhvlmxkujn .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ikwtzkmpzz .gt_group_heading {
+#fhvlmxkujn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1994,7 +1808,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#ikwtzkmpzz .gt_empty_group_heading {
+#fhvlmxkujn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2009,15 +1823,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#ikwtzkmpzz .gt_from_md > :first-child {
+#fhvlmxkujn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ikwtzkmpzz .gt_from_md > :last-child {
+#fhvlmxkujn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ikwtzkmpzz .gt_row {
+#fhvlmxkujn .gt_row {
   padding-top: 3px;
   padding-bottom: 3px;
   padding-left: 5px;
@@ -2036,7 +1850,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ikwtzkmpzz .gt_stub {
+#fhvlmxkujn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2049,7 +1863,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ikwtzkmpzz .gt_stub_row_group {
+#fhvlmxkujn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2063,15 +1877,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#ikwtzkmpzz .gt_row_group_first td {
+#fhvlmxkujn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ikwtzkmpzz .gt_row_group_first th {
+#fhvlmxkujn .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ikwtzkmpzz .gt_summary_row {
+#fhvlmxkujn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2081,16 +1895,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ikwtzkmpzz .gt_first_summary_row {
+#fhvlmxkujn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_first_summary_row.thick {
+#fhvlmxkujn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ikwtzkmpzz .gt_last_summary_row {
+#fhvlmxkujn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2100,7 +1914,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_grand_summary_row {
+#fhvlmxkujn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2110,7 +1924,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ikwtzkmpzz .gt_first_grand_summary_row {
+#fhvlmxkujn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2120,7 +1934,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_last_grand_summary_row_top {
+#fhvlmxkujn .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2130,11 +1944,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_striped {
+#fhvlmxkujn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ikwtzkmpzz .gt_table_body {
+#fhvlmxkujn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2143,7 +1957,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_footnotes {
+#fhvlmxkujn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2157,7 +1971,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_footnote {
+#fhvlmxkujn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2166,7 +1980,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ikwtzkmpzz .gt_sourcenotes {
+#fhvlmxkujn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2180,7 +1994,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ikwtzkmpzz .gt_sourcenote {
+#fhvlmxkujn .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2188,63 +2002,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ikwtzkmpzz .gt_left {
+#fhvlmxkujn .gt_left {
   text-align: left;
 }
 
-#ikwtzkmpzz .gt_center {
+#fhvlmxkujn .gt_center {
   text-align: center;
 }
 
-#ikwtzkmpzz .gt_right {
+#fhvlmxkujn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ikwtzkmpzz .gt_font_normal {
+#fhvlmxkujn .gt_font_normal {
   font-weight: normal;
 }
 
-#ikwtzkmpzz .gt_font_bold {
+#fhvlmxkujn .gt_font_bold {
   font-weight: bold;
 }
 
-#ikwtzkmpzz .gt_font_italic {
+#fhvlmxkujn .gt_font_italic {
   font-style: italic;
 }
 
-#ikwtzkmpzz .gt_super {
+#fhvlmxkujn .gt_super {
   font-size: 65%;
 }
 
-#ikwtzkmpzz .gt_footnote_marks {
+#fhvlmxkujn .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ikwtzkmpzz .gt_asterisk {
+#fhvlmxkujn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ikwtzkmpzz .gt_indent_1 {
+#fhvlmxkujn .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ikwtzkmpzz .gt_indent_2 {
+#fhvlmxkujn .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ikwtzkmpzz .gt_indent_3 {
+#fhvlmxkujn .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ikwtzkmpzz .gt_indent_4 {
+#fhvlmxkujn .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ikwtzkmpzz .gt_indent_5 {
+#fhvlmxkujn .gt_indent_5 {
   text-indent: 25px;
 }
 
@@ -2300,71 +2114,76 @@ tbody tr:last-child {
   
 </table>
 </div>
-</div>
-</div>
-</section>
-<section id="법령-기준" class="level3" data-number="2.5.2">
-<h3 data-number="2.5.2" class="anchored" data-anchor-id="법령-기준"><span class="header-section-number">2.5.2</span> 법령 기준</h3>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">표</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">그래프</a></li></ul>
-<div class="tab-content">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(중앙지자체 <span class="ot">=</span> <span class="fu">case_when</span>(사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"국가"</span>) <span class="sc">~</span> <span class="st">"중앙정부"</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                사무유형 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"시도"</span>, <span class="st">"시도-시군구"</span>, <span class="st">"시군구"</span>) <span class="sc">~</span> <span class="st">"지자체"</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                                사무유형 <span class="sc">==</span> <span class="st">"없음"</span> <span class="sc">~</span> <span class="st">"없음"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                                <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"공동"</span>)) <span class="sc">|&gt;</span>  </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(사무유형 != "없음") |&gt;</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(중앙지자체, 사무유형) <span class="sc">|&gt;</span> </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(중앙지자체, 사무유형, <span class="at">name =</span> <span class="st">"법령건수"</span>, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(비율 <span class="ot">=</span> 법령건수 <span class="sc">/</span> <span class="fu">sum</span>(법령건수)) <span class="sc">|&gt;</span> </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>(<span class="at">groupname_col =</span> <span class="st">"중앙지자체"</span>,</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">rowname_col   =</span> <span class="st">"사무유형"</span>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(비율, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(법령건수) <span class="sc">|&gt;</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"법령건수"</span>),</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_integer</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"비율"</span>),</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_percent,</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">0</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_538</span>()  </span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+```
+:::
+:::
 
-<div id="szwarrzcrq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+
+### 법령 기준
+
+:::{.panel-tabset}
+
+#### 표 {.unnumbered}
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+law_tbl |>
+  mutate(중앙지자체 = case_when(사무유형 %in% c("국가") ~ "중앙정부",
+                                사무유형 %in% c("시도", "시도-시군구", "시군구") ~ "지자체",
+                                사무유형 == "없음" ~ "없음",
+                                TRUE ~ "공동")) |>  
+  # filter(사무유형 != "없음") |>
+  group_by(법령명) |>
+  count(중앙지자체, 사무유형) |> 
+  ungroup() |> 
+  count(중앙지자체, 사무유형, name = "법령건수", sort = TRUE) |> 
+mutate(비율 = 법령건수 / sum(법령건수)) |> 
+  gt(groupname_col = "중앙지자체",
+     rowname_col   = "사무유형"  ) |> 
+  fmt_percent(비율, decimals = 1) |>
+  fmt_integer(법령건수) |>
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("법령건수"),
+    formatter = fmt_integer
+  ) |> 
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("비율"),
+    formatter = fmt_percent,
+    decimals = 0
+  ) |> 
+  gt_theme_538()  
+```
+
+::: {.cell-output-display}
+```{=html}
+<div id="gbibtcyvns" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cairo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#szwarrzcrq table {
+#gbibtcyvns table {
   font-family: Cairo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#szwarrzcrq thead, #szwarrzcrq tbody, #szwarrzcrq tfoot, #szwarrzcrq tr, #szwarrzcrq td, #szwarrzcrq th {
+#gbibtcyvns thead, #gbibtcyvns tbody, #gbibtcyvns tfoot, #gbibtcyvns tr, #gbibtcyvns td, #gbibtcyvns th {
   border-style: none;
 }
 
-#szwarrzcrq p {
+#gbibtcyvns p {
   margin: 0;
   padding: 0;
 }
 
-#szwarrzcrq .gt_table {
+#gbibtcyvns .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2390,12 +2209,12 @@ tbody tr:last-child {
   border-left-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_caption {
+#gbibtcyvns .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#szwarrzcrq .gt_title {
+#gbibtcyvns .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2407,7 +2226,7 @@ tbody tr:last-child {
   border-bottom-width: 0;
 }
 
-#szwarrzcrq .gt_subtitle {
+#gbibtcyvns .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2419,7 +2238,7 @@ tbody tr:last-child {
   border-top-width: 0;
 }
 
-#szwarrzcrq .gt_heading {
+#gbibtcyvns .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -2431,13 +2250,13 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_bottom_border {
+#gbibtcyvns .gt_bottom_border {
   border-bottom-style: none;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_col_headings {
+#gbibtcyvns .gt_col_headings {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2452,7 +2271,7 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_col_heading {
+#gbibtcyvns .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2472,7 +2291,7 @@ tbody tr:last-child {
   overflow-x: hidden;
 }
 
-#szwarrzcrq .gt_column_spanner_outer {
+#gbibtcyvns .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2484,15 +2303,15 @@ tbody tr:last-child {
   padding-right: 4px;
 }
 
-#szwarrzcrq .gt_column_spanner_outer:first-child {
+#gbibtcyvns .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#szwarrzcrq .gt_column_spanner_outer:last-child {
+#gbibtcyvns .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#szwarrzcrq .gt_column_spanner {
+#gbibtcyvns .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #000000;
@@ -2504,11 +2323,11 @@ tbody tr:last-child {
   width: 100%;
 }
 
-#szwarrzcrq .gt_spanner_row {
+#gbibtcyvns .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#szwarrzcrq .gt_group_heading {
+#gbibtcyvns .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2534,7 +2353,7 @@ tbody tr:last-child {
   text-align: left;
 }
 
-#szwarrzcrq .gt_empty_group_heading {
+#gbibtcyvns .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2549,15 +2368,15 @@ tbody tr:last-child {
   vertical-align: middle;
 }
 
-#szwarrzcrq .gt_from_md > :first-child {
+#gbibtcyvns .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#szwarrzcrq .gt_from_md > :last-child {
+#gbibtcyvns .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#szwarrzcrq .gt_row {
+#gbibtcyvns .gt_row {
   padding-top: 3px;
   padding-bottom: 3px;
   padding-left: 5px;
@@ -2576,7 +2395,7 @@ tbody tr:last-child {
   overflow-x: hidden;
 }
 
-#szwarrzcrq .gt_stub {
+#gbibtcyvns .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2589,7 +2408,7 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#szwarrzcrq .gt_stub_row_group {
+#gbibtcyvns .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2603,15 +2422,15 @@ tbody tr:last-child {
   vertical-align: top;
 }
 
-#szwarrzcrq .gt_row_group_first td {
+#gbibtcyvns .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#szwarrzcrq .gt_row_group_first th {
+#gbibtcyvns .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#szwarrzcrq .gt_summary_row {
+#gbibtcyvns .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2621,16 +2440,16 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#szwarrzcrq .gt_first_summary_row {
+#gbibtcyvns .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_first_summary_row.thick {
+#gbibtcyvns .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#szwarrzcrq .gt_last_summary_row {
+#gbibtcyvns .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2640,7 +2459,7 @@ tbody tr:last-child {
   border-bottom-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_grand_summary_row {
+#gbibtcyvns .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2650,7 +2469,7 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#szwarrzcrq .gt_first_grand_summary_row {
+#gbibtcyvns .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2660,7 +2479,7 @@ tbody tr:last-child {
   border-top-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_last_grand_summary_row_top {
+#gbibtcyvns .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2670,11 +2489,11 @@ tbody tr:last-child {
   border-bottom-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_striped {
+#gbibtcyvns .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#szwarrzcrq .gt_table_body {
+#gbibtcyvns .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2683,7 +2502,7 @@ tbody tr:last-child {
   border-bottom-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_footnotes {
+#gbibtcyvns .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2697,7 +2516,7 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_footnote {
+#gbibtcyvns .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2706,7 +2525,7 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#szwarrzcrq .gt_sourcenotes {
+#gbibtcyvns .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2720,7 +2539,7 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#szwarrzcrq .gt_sourcenote {
+#gbibtcyvns .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2728,63 +2547,63 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#szwarrzcrq .gt_left {
+#gbibtcyvns .gt_left {
   text-align: left;
 }
 
-#szwarrzcrq .gt_center {
+#gbibtcyvns .gt_center {
   text-align: center;
 }
 
-#szwarrzcrq .gt_right {
+#gbibtcyvns .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#szwarrzcrq .gt_font_normal {
+#gbibtcyvns .gt_font_normal {
   font-weight: normal;
 }
 
-#szwarrzcrq .gt_font_bold {
+#gbibtcyvns .gt_font_bold {
   font-weight: bold;
 }
 
-#szwarrzcrq .gt_font_italic {
+#gbibtcyvns .gt_font_italic {
   font-style: italic;
 }
 
-#szwarrzcrq .gt_super {
+#gbibtcyvns .gt_super {
   font-size: 65%;
 }
 
-#szwarrzcrq .gt_footnote_marks {
+#gbibtcyvns .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#szwarrzcrq .gt_asterisk {
+#gbibtcyvns .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#szwarrzcrq .gt_indent_1 {
+#gbibtcyvns .gt_indent_1 {
   text-indent: 5px;
 }
 
-#szwarrzcrq .gt_indent_2 {
+#gbibtcyvns .gt_indent_2 {
   text-indent: 10px;
 }
 
-#szwarrzcrq .gt_indent_3 {
+#gbibtcyvns .gt_indent_3 {
   text-indent: 15px;
 }
 
-#szwarrzcrq .gt_indent_4 {
+#gbibtcyvns .gt_indent_4 {
   text-indent: 20px;
 }
 
-#szwarrzcrq .gt_indent_5 {
+#gbibtcyvns .gt_indent_5 {
   text-indent: 25px;
 }
 
@@ -2846,119 +2665,124 @@ tbody tr:last-child {
   
 </table>
 </div>
-</div>
-</div>
-</div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<p><a href="https://r-charts.com/part-whole/ggvenndiagram/">Venn diagram with ggVennDiagram</a></p>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggVennDiagram)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>affairs_type <span class="ot">&lt;-</span> law_tbl <span class="sc">|&gt;</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(사무유형 <span class="sc">!=</span> <span class="st">"없음"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무유형) <span class="sc">|&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(법령명, 사무유형) <span class="sc">|&gt;</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(사무유형, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"사무1"</span>, <span class="st">"사무2"</span>, <span class="st">"사무3"</span>), <span class="at">sep =</span> <span class="st">"-"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(번호 <span class="ot">=</span> <span class="fu">row_number</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(사무1 <span class="ot">=</span> <span class="fu">str_glue</span>(<span class="st">"{사무1}_{번호}"</span>),</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>         사무2 <span class="ot">=</span> <span class="fu">str_glue</span>(<span class="st">"{사무2}_{번호}"</span>),</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>         사무3 <span class="ot">=</span> <span class="fu">str_glue</span>(<span class="st">"{사무3}_{번호}"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>법령명, <span class="sc">-</span>n, <span class="sc">-</span>번호) <span class="sc">|&gt;</span> </span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(사무1<span class="sc">:</span>사무3, <span class="at">names_to =</span> <span class="st">"사무구분"</span>, <span class="at">values_to =</span> <span class="st">"사무"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(사무, <span class="st">"^NA"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(집합 <span class="ot">=</span> <span class="fu">case_when</span>(<span class="fu">str_detect</span>(사무, <span class="st">"국가"</span>) <span class="sc">~</span> <span class="st">"국가"</span>,</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">str_detect</span>(사무, <span class="st">"시도"</span>) <span class="sc">~</span> <span class="st">"시도"</span>,</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">str_detect</span>(사무, <span class="st">"시군구"</span>) <span class="sc">~</span> <span class="st">"시군구"</span>,</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>                          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"기타"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(원소 <span class="ot">=</span> <span class="fu">str_extract</span>(사무, <span class="st">"</span><span class="sc">\\</span><span class="st">d{1,5}"</span>))</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>korea_type <span class="ot">&lt;-</span> affairs_type <span class="sc">|&gt;</span> </span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(집합 <span class="sc">==</span> <span class="st">"국가"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(원소) <span class="sc">|&gt;</span> </span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>sido_type <span class="ot">&lt;-</span> affairs_type <span class="sc">|&gt;</span> </span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(집합 <span class="sc">==</span> <span class="st">"시도"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(원소) <span class="sc">|&gt;</span> </span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>sgg_type <span class="ot">&lt;-</span> affairs_type <span class="sc">|&gt;</span> </span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(집합 <span class="sc">==</span> <span class="st">"시군구"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(원소) <span class="sc">|&gt;</span> </span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>()</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="fu">ggVennDiagram</span>(<span class="fu">list</span>(국가 <span class="ot">=</span> korea_type, 시도 <span class="ot">=</span> sido_type, 시군구 <span class="ot">=</span> sgg_type),</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>              <span class="at">category.names =</span> <span class="fu">c</span>(<span class="st">"국가"</span>,</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"시도"</span>,</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"구시군"</span>),</span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>               <span class="at">label_alpha =</span> <span class="dv">0</span>,</span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="dv">1</span>, <span class="at">lwd =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"#F4FAFE"</span>, <span class="at">high =</span> <span class="st">"#4981BF"</span>) <span class="sc">+</span></span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="EDA_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="EDA_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="국가사무-유형" class="level3" data-number="2.5.3">
-<h3 data-number="2.5.3" class="anchored" data-anchor-id="국가사무-유형"><span class="header-section-number">2.5.3</span> 국가사무 유형</h3>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>law_tbl <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(사무유형 <span class="sc">!=</span> <span class="st">"없음"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무유형) <span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(법령명, 사무유형) <span class="sc">|&gt;</span> </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(사무패턴 <span class="ot">=</span> <span class="fu">str_c</span>(사무유형, <span class="at">collapse =</span> <span class="st">"; "</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(사무패턴, <span class="at">name =</span> <span class="st">"법령건수"</span>, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_integer</span>(법령건수) <span class="sc">|&gt;</span> </span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">fns =</span> <span class="fu">list</span>(</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"합계"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sum</span>(.)),</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"법령건수"</span>),</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">formatter =</span> fmt_integer</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_538</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+```
+:::
+:::
 
-<div id="rwewnndgzk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+
+#### 그래프 {.unnumbered}
+
+[Venn diagram with ggVennDiagram](https://r-charts.com/part-whole/ggvenndiagram/)
+
+
+::: {.cell}
+
+```{.r .cell-code}
+library(ggVennDiagram)
+
+
+affairs_type <- law_tbl |>
+  filter(사무유형 != "없음") |>
+  group_by(법령명) |>
+  count(사무유형) |>
+  arrange(법령명, 사무유형) |>
+  ungroup() |>
+  separate(사무유형, into = c("사무1", "사무2", "사무3"), sep = "-") |>
+  mutate(번호 = row_number()) |> 
+  mutate(사무1 = str_glue("{사무1}_{번호}"),
+         사무2 = str_glue("{사무2}_{번호}"),
+         사무3 = str_glue("{사무3}_{번호}")) |> 
+  select(-법령명, -n, -번호) |> 
+  pivot_longer(사무1:사무3, names_to = "사무구분", values_to = "사무") |> 
+  filter(!str_detect(사무, "^NA")) |> 
+  mutate(집합 = case_when(str_detect(사무, "국가") ~ "국가",
+                          str_detect(사무, "시도") ~ "시도",
+                          str_detect(사무, "시군구") ~ "시군구",
+                          TRUE ~ "기타")) |> 
+  mutate(원소 = str_extract(사무, "\\d{1,5}"))
+
+    
+korea_type <- affairs_type |> 
+  filter(집합 == "국가") |> 
+  pull(원소) |> 
+  unlist()
+
+sido_type <- affairs_type |> 
+  filter(집합 == "시도") |> 
+  pull(원소) |> 
+  unlist()
+
+sgg_type <- affairs_type |> 
+  filter(집합 == "시군구") |> 
+  pull(원소) |> 
+  unlist()
+
+ggVennDiagram(list(국가 = korea_type, 시도 = sido_type, 시군구 = sgg_type),
+              category.names = c("국가",
+                                 "시도",
+                                 "구시군"),
+               label_alpha = 0,
+               color = 1, lwd = 0.7) +
+  scale_fill_gradient(low = "#F4FAFE", high = "#4981BF") +
+  theme(legend.position = "none")
+```
+
+::: {.cell-output-display}
+![](EDA_files/figure-html/unnamed-chunk-9-1.png){width=672}
+:::
+:::
+
+
+:::
+
+### 국가사무 유형
+
+
+
+::: {.cell}
+
+```{.r .cell-code}
+law_tbl |>
+  filter(사무유형 != "없음") |>
+  group_by(법령명) |>
+  count(사무유형) |>
+  arrange(법령명, 사무유형) |> 
+  summarise(사무패턴 = str_c(사무유형, collapse = "; ")) |> 
+  count(사무패턴, name = "법령건수", sort = TRUE) |> 
+  gt() |> 
+  fmt_integer(법령건수) |> 
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("법령건수"),
+    formatter = fmt_integer
+  ) |> 
+  gt_theme_538()
+```
+
+::: {.cell-output-display}
+```{=html}
+<div id="fvhofeibej" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cairo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#rwewnndgzk table {
+#fvhofeibej table {
   font-family: Cairo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#rwewnndgzk thead, #rwewnndgzk tbody, #rwewnndgzk tfoot, #rwewnndgzk tr, #rwewnndgzk td, #rwewnndgzk th {
+#fvhofeibej thead, #fvhofeibej tbody, #fvhofeibej tfoot, #fvhofeibej tr, #fvhofeibej td, #fvhofeibej th {
   border-style: none;
 }
 
-#rwewnndgzk p {
+#fvhofeibej p {
   margin: 0;
   padding: 0;
 }
 
-#rwewnndgzk .gt_table {
+#fvhofeibej .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2984,12 +2808,12 @@ tbody tr:last-child {
   border-left-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_caption {
+#fvhofeibej .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#rwewnndgzk .gt_title {
+#fvhofeibej .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3001,7 +2825,7 @@ tbody tr:last-child {
   border-bottom-width: 0;
 }
 
-#rwewnndgzk .gt_subtitle {
+#fvhofeibej .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3013,7 +2837,7 @@ tbody tr:last-child {
   border-top-width: 0;
 }
 
-#rwewnndgzk .gt_heading {
+#fvhofeibej .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -3025,13 +2849,13 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_bottom_border {
+#fvhofeibej .gt_bottom_border {
   border-bottom-style: none;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_col_headings {
+#fvhofeibej .gt_col_headings {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3046,7 +2870,7 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_col_heading {
+#fvhofeibej .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3066,7 +2890,7 @@ tbody tr:last-child {
   overflow-x: hidden;
 }
 
-#rwewnndgzk .gt_column_spanner_outer {
+#fvhofeibej .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3078,15 +2902,15 @@ tbody tr:last-child {
   padding-right: 4px;
 }
 
-#rwewnndgzk .gt_column_spanner_outer:first-child {
+#fvhofeibej .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rwewnndgzk .gt_column_spanner_outer:last-child {
+#fvhofeibej .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rwewnndgzk .gt_column_spanner {
+#fvhofeibej .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #000000;
@@ -3098,11 +2922,11 @@ tbody tr:last-child {
   width: 100%;
 }
 
-#rwewnndgzk .gt_spanner_row {
+#fvhofeibej .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#rwewnndgzk .gt_group_heading {
+#fvhofeibej .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3128,7 +2952,7 @@ tbody tr:last-child {
   text-align: left;
 }
 
-#rwewnndgzk .gt_empty_group_heading {
+#fvhofeibej .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3143,15 +2967,15 @@ tbody tr:last-child {
   vertical-align: middle;
 }
 
-#rwewnndgzk .gt_from_md > :first-child {
+#fvhofeibej .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rwewnndgzk .gt_from_md > :last-child {
+#fvhofeibej .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rwewnndgzk .gt_row {
+#fvhofeibej .gt_row {
   padding-top: 3px;
   padding-bottom: 3px;
   padding-left: 5px;
@@ -3170,7 +2994,7 @@ tbody tr:last-child {
   overflow-x: hidden;
 }
 
-#rwewnndgzk .gt_stub {
+#fvhofeibej .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3183,7 +3007,7 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#rwewnndgzk .gt_stub_row_group {
+#fvhofeibej .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3197,15 +3021,15 @@ tbody tr:last-child {
   vertical-align: top;
 }
 
-#rwewnndgzk .gt_row_group_first td {
+#fvhofeibej .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rwewnndgzk .gt_row_group_first th {
+#fvhofeibej .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#rwewnndgzk .gt_summary_row {
+#fvhofeibej .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3215,16 +3039,16 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#rwewnndgzk .gt_first_summary_row {
+#fvhofeibej .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_first_summary_row.thick {
+#fvhofeibej .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rwewnndgzk .gt_last_summary_row {
+#fvhofeibej .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3234,7 +3058,7 @@ tbody tr:last-child {
   border-bottom-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_grand_summary_row {
+#fvhofeibej .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3244,7 +3068,7 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#rwewnndgzk .gt_first_grand_summary_row {
+#fvhofeibej .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3254,7 +3078,7 @@ tbody tr:last-child {
   border-top-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_last_grand_summary_row_top {
+#fvhofeibej .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3264,11 +3088,11 @@ tbody tr:last-child {
   border-bottom-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_striped {
+#fvhofeibej .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rwewnndgzk .gt_table_body {
+#fvhofeibej .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3277,7 +3101,7 @@ tbody tr:last-child {
   border-bottom-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_footnotes {
+#fvhofeibej .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3291,7 +3115,7 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_footnote {
+#fvhofeibej .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3300,7 +3124,7 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#rwewnndgzk .gt_sourcenotes {
+#fvhofeibej .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3314,7 +3138,7 @@ tbody tr:last-child {
   border-right-color: #D3D3D3;
 }
 
-#rwewnndgzk .gt_sourcenote {
+#fvhofeibej .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3322,63 +3146,63 @@ tbody tr:last-child {
   padding-right: 5px;
 }
 
-#rwewnndgzk .gt_left {
+#fvhofeibej .gt_left {
   text-align: left;
 }
 
-#rwewnndgzk .gt_center {
+#fvhofeibej .gt_center {
   text-align: center;
 }
 
-#rwewnndgzk .gt_right {
+#fvhofeibej .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rwewnndgzk .gt_font_normal {
+#fvhofeibej .gt_font_normal {
   font-weight: normal;
 }
 
-#rwewnndgzk .gt_font_bold {
+#fvhofeibej .gt_font_bold {
   font-weight: bold;
 }
 
-#rwewnndgzk .gt_font_italic {
+#fvhofeibej .gt_font_italic {
   font-style: italic;
 }
 
-#rwewnndgzk .gt_super {
+#fvhofeibej .gt_super {
   font-size: 65%;
 }
 
-#rwewnndgzk .gt_footnote_marks {
+#fvhofeibej .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#rwewnndgzk .gt_asterisk {
+#fvhofeibej .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rwewnndgzk .gt_indent_1 {
+#fvhofeibej .gt_indent_1 {
   text-indent: 5px;
 }
 
-#rwewnndgzk .gt_indent_2 {
+#fvhofeibej .gt_indent_2 {
   text-indent: 10px;
 }
 
-#rwewnndgzk .gt_indent_3 {
+#fvhofeibej .gt_indent_3 {
   text-indent: 15px;
 }
 
-#rwewnndgzk .gt_indent_4 {
+#fvhofeibej .gt_indent_4 {
   text-indent: 20px;
 }
 
-#rwewnndgzk .gt_indent_5 {
+#fvhofeibej .gt_indent_5 {
   text-indent: 25px;
 }
 
@@ -3644,394 +3468,39 @@ tbody tr:last-child {
   
 </table>
 </div>
-</div>
-</div>
-</section>
-</section>
-</section>
-<section id="법령" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> 법령</h1>
-<p>법령은 법률 + 시행령 + 시행규칙 + <del>행정규칙</del> 으로 구성된다.</p>
-<div class="cell">
-<details>
-<summary>코드</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>law_type <span class="ot">&lt;-</span> law_tbl <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(법령명) <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(조문수 <span class="ot">=</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(법령구분 <span class="ot">=</span> <span class="fu">case_when</span>(</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(법령명, <span class="st">"법률$"</span>) <span class="sc">~</span> <span class="st">"법률"</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(법령명, <span class="st">"시행령$"</span>) <span class="sc">~</span> <span class="st">"시행령"</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(법령명, <span class="st">"시행규칙$"</span>) <span class="sc">~</span> <span class="st">"시행규칙"</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"기타"</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  )) </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>law_type <span class="sc">|&gt;</span> </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(법령구분)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 2</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   법령구분     n</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 기타      1518</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 법률       528</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 시행규칙   935</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 시행령    1343</span></span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-
-
-</section>
-
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  let localAlternateSentinel = 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "복사완료!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "복사완료!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  });
-  function tippyHover(el, contentFn) {
-    const config = {
-      allowHTML: true,
-      content: contentFn,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start'
-    };
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      return note.innerHTML;
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
-      });
-    }
-  }
-});
-</script>
-</div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","selector":".lightbox","openEffect":"fade","closeEffect":"fade","loop":true});</script>
+```
+:::
+:::
 
 
 
-</body></html>
+# 법령
+
+법령은 법률 + 시행령 + 시행규칙 + ~~행정규칙~~ 으로 구성된다.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+law_type <- law_tbl |>
+  group_by(법령명) |>
+  summarise(조문수 = n()) |> 
+  mutate(법령구분 = case_when(
+    str_detect(법령명, "법률$") ~ "법률",
+    str_detect(법령명, "시행령$") ~ "시행령",
+    str_detect(법령명, "시행규칙$") ~ "시행규칙",
+    TRUE ~ "기타"
+  )) 
+
+law_type |> 
+  count(법령구분)
+#> # A tibble: 4 × 2
+#>   법령구분     n
+#>   <chr>    <int>
+#> 1 기타      1518
+#> 2 법률       528
+#> 3 시행규칙   935
+#> 4 시행령    1343
+```
+:::
+
