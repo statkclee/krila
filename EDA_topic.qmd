@@ -77,6 +77,7 @@ affairs_tbl |>
   gtExtras::gt_theme_538()
 ```
 
+::: {.panel-tabset}
 
 ### 환경부 {.unnumbered}
 
@@ -133,11 +134,14 @@ affairs_tbl |>
   wordcloud2::wordcloud2(fontFamily = "NanumSquare")  
 ```
 
+:::
+
 # 토픽 모형
 
+## 요약
 
 ```{r}
-#| eval: false
+#| eval: true
 # 필요한 패키지 로드
 library(tidytext)
 library(stm)
@@ -148,33 +152,44 @@ affairs_tbl <- law_tbl |>
 
 
 # tidytext를 사용해 토큰화
-tidy_texts <- texts_df %>%
-  unnest_tokens(word, text)
+affairs_texts <- affairs_tbl |> 
+  filter(수행주체 == "과학기술정보통신부장관") |>
+  mutate(명사 = map(사무명, morpho_mecab, indiv = TRUE)) |> 
+  unnest(명사)
 
-# 불용어 제거
-data("stop_words")
-tidy_texts <- tidy_texts %>%
-  anti_join(stop_words, by = "word")
+# affairs_texts %>%
+#   count(사무명, 명사, sort = TRUE)
 
 # Document-Term Matrix 생성
-dtm <- tidy_texts %>%
-  count(line, word) %>%
-  cast_dtm(line, word, n)
+affairs_sparse  <- affairs_texts %>%
+  count(사무명, 명사) %>%
+  filter(n > 2) |> 
+  cast_sparse(사무명, 명사, n)
 
-# LDA 모델 생성 및 적합
-lda_model <- LDA(dtm, k = 10)  # k는 토픽의 수
+# STM 토픽모형
+topic_model <- stm(affairs_sparse, K = 8, verbose = FALSE)  # k는 토픽의 수
 
 # 결과 추출
-topics <- tidy(lda_model, matrix = "beta")
+summary(topic_model)
+```
 
-# 각 토픽의 상위 단어 추출
-top_terms <- topics %>%
-  group_by(topic) %>%
-  top_n(10, beta) %>%
-  ungroup() %>%
-  arrange(topic, -beta)
+## 시각화
 
-# 결과 출력
-top_terms
+```{r}
+affairs_gamma <- tidy(
+  topic_model, 
+  matrix = "gamma",
+  document_names = rownames(affairs_sparse)
+) 
+
+affairs_gamma |> 
+  mutate(topic = factor(topic)) |> 
+  ggplot(aes(x = topic, y = reorder(document, gamma), fill = gamma)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         midpoint = 0.5) +
+    theme_minimal() +
+    labs(x = "토픽", y = "문서", fill = "감마") 
+
 ```
 

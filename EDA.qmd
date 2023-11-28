@@ -264,22 +264,57 @@ law_tbl |>
 
 ```{r}
 law_type <- law_tbl |>
-  group_by(법령명) |>
+  group_by(법령명, 법령_구분) |>
   summarise(조문수 = n()) |> 
+  ungroup() |>
   mutate(법령구분 = case_when(
     str_detect(법령명, "법률$") ~ "법률",
     str_detect(법령명, "시행령$") ~ "시행령",
     str_detect(법령명, "시행규칙$") ~ "시행규칙",
-    TRUE ~ "기타"
+    TRUE ~ 법령명
   )) 
 
-law_type |> 
-  count(법령구분)
 
+law_set <- read_excel("data/법령정보.xlsx", sheet = '법령목록') |> 
+  janitor::clean_names(ascii = FALSE) |> 
+  rename(법시시 = 법률_시행령_시행규칙_기타구분)
+
+law_type_set <- law_type |>
+  # mutate(법령명 = str_extract(법령명, "[0-9가-힣]+"))
+  left_join(law_set |> select(법령명, 법종구분코드명, 법시시), by = "법령명") |> 
+  mutate(법시시 = case_when(
+    str_detect(법령명, "법률$") ~ "법률",
+    str_detect(법령명, "시행령$") ~ "시행령",
+    str_detect(법령명, "시행규칙$") ~ "시행규칙",
+    TRUE ~ 법시시
+  )) |> 
+  mutate(법령_구분 = as.character(법령_구분)) |> 
+  mutate(법령구분 = case_when(
+    법령_구분 == "1" ~ "법률",
+    법령_구분 == "2" ~ "시행령",
+    법령_구분 == "3" ~ "시행규칙",
+    TRUE ~ 법령_구분
+  )) 
+
+law_type_set |> 
+  count(법령구분, 법시시, name = "조문수", sort = TRUE) |>
+  pivot_wider(names_from = 법시시, values_from = 조문수, values_fill = 0) |> 
+  relocate(법률, .after = 법령구분) |>
+  mutate(법령구분 = ifelse(is.na(법령구분), "결측", 법령구분)) |> 
+  mutate(법령구분 = factor(법령구분, levels = c("법률", "시행령", "시행규칙", "결측"))) |>
+  arrange(법령구분) |>
+  gt() |>
+  gtExtras::gt_theme_538()
 
 ```
 
 
+## 오분류 법령
 
-
+```{r}
+law_type_set |> 
+  filter(법령구분 != 법시시) |> 
+  select(-조문수) |> 
+  gt()
+```
 
