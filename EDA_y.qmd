@@ -1,0 +1,65 @@
+---
+title: "Y 교차분석"
+editor_options: 
+  chunk_output_type: console
+---
+
+# 데이터
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(gt)
+
+# 사무판단
+law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
+
+law_tbl <- law_raw |>
+  janitor::clean_names(ascii = FALSE) |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |> 
+  mutate(사무유형 = str_remove(사무유형, "\r\n")) |>
+  # 사무유형: 국가, 시도, 공동, ...
+  mutate(사무유형 = case_when(사무유형 == "국가시도" ~ "국가-시도",
+                              사무유형 == "정부" ~ "국가",
+                              사무유형 == "공동" ~ "국가-시도",
+                              is.na(사무유형) ~ "없음",
+                              TRUE ~ 사무유형))  |> 
+  rename(부처명 = 소관_부처명)
+
+## 법률, 시행령, 시행규칙
+## 법령_구분 : 데이터 전처리 (정제작업, 오분류, 결측값)
+law_set <- read_excel("data/법령정보.xlsx", sheet = '법령목록') |> 
+  janitor::clean_names(ascii = FALSE) |> 
+  rename(법시시 = 법률_시행령_시행규칙_기타구분)
+
+
+law_type <- law_tbl |> 
+  group_by(법령명, 법령_구분) |>
+  summarise(조항수 = n()) |>
+  ungroup() |> 
+  mutate(법령_구분 = as.character(법령_구분)) |> 
+  fill(법령_구분, .direction = "down") |>
+  mutate(법령구분 = case_when(법령_구분 == "1" ~ "법률",
+                              법령_구분 == "2" ~ "시행령",
+                              법령_구분 == "3" ~ "시행규칙",
+                              TRUE ~ 법령_구분)) |> 
+  left_join(law_set |> select(법령명, 법시시) |> filter(법시시 != "NA"), by = "법령명") |>
+  mutate(법시시 = if_else(is.na(법시시) | 법시시 == "기타", 법령구분, 법시시)) |>
+  mutate(법령구분 = if_else(법령구분 == "법시시", 법령구분, 법시시)) |> 
+  select(법령명, 법령구분 = 법시시)
+
+law_type |> 
+  count(법령구분, name = "법령수")
+
+# # A tibble: 3 × 4
+#   법령구분  법률 시행규칙 시행령
+#   <chr>    <int>    <int>  <int>
+# 1 법률      1451       NA     NA
+# 2 시행규칙    NA     1217     NA
+# 3 시행령      NA       NA   1670
+
+```  
+
+
+# EDA
+

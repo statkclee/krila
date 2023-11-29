@@ -67,7 +67,8 @@ website:
           text: "EDA II"
         - href: EDA_topic.qmd
           text: "토픽 모형 (사무명)"
-
+        - href: EDA_y.qmd
+          text: "Y 교차분석"
 
 
   
