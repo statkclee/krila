@@ -1,15 +1,173 @@
 ---
-title: "EDA I"
+title: "EDA"
+subtitle: "법령"
 editor_options: 
   chunk_output_type: console
 ---
 
-# 데이터
+# 조항목 행수
 
 ```{r}
 library(tidyverse)
 library(readxl)
+library(gt)
+library(gtExtras)
 
+law_EDA <- 
+  read_rds("data/law_EDA.rds") 
+
+law_EDA |> 
+  count(법령명, sort = TRUE, name = "행수") |> 
+  slice_max(행수, n = 10) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_integer(행수) |> 
+  tab_header(
+    title = md("상위 행수 20개 조항목 법령")
+  )
+```
+
+## 법령구분
+
+:::{.panel-tabset}
+
+### 법률 {.unnumbered}
+
+```{r}
+law_lines_top <- law_EDA |> 
+  group_by(법령구분) |> 
+  count(법령명, 법령구분, sort = TRUE, name = "행수") 
+
+law_lines_top |> 
+  filter(법령구분 == "법률") |> 
+  slice_max(행수, n = 20) |>
+  pivot_wider(names_from = 법령구분, values_from = 행수, values_fill = 0) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_integer() |> 
+  tab_header(
+    title = md("상위 행수 20개 법률")
+  )
+```
+
+### 시행령 {.unnumbered}
+
+```{r}
+law_lines_top |> 
+  filter(법령구분 == "시행령") |> 
+  slice_max(행수, n = 20) |>
+  pivot_wider(names_from = 법령구분, values_from = 행수, values_fill = 0) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_integer() |> 
+  tab_header(
+    title = md("상위 행수 20개 시행령")
+  )
+```
+
+### 시행규칙 {.unnumbered}
+
+```{r}
+law_lines_top |> 
+  filter(법령구분 == "시행규칙") |> 
+  slice_max(행수, n = 20) |>
+  pivot_wider(names_from = 법령구분, values_from = 행수, values_fill = 0) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_integer() |> 
+  tab_header(
+    title = md("상위 행수 20개 시행규칙")
+  )
+```
+
+:::
+
+
+# 법령별 사무판단 건수와 행수
+
+## 법령별 사무판단 건수
+
+```{r}
+law_EDA |>
+  group_by(법령명, 사무_판단) |>
+  summarise(건수 = n()) |>
+  ungroup() |> 
+  pivot_wider(names_from = 사무_판단, values_from = 건수, values_fill = 0) |>
+  mutate(합계 = `0` + `1`) |>
+  mutate(비율 = `1` / 합계 ) |> 
+  rename("사무없음" =`0`,  "사무있음" = `1`) |> 
+  mutate(사무여부 = if_else(사무있음 > 0, "사무있음", "사무없음")) |> 
+  count(사무여부, name = "법령건수") |> 
+  mutate(비율 = 법령건수 / sum(법령건수)) |> 
+  janitor::adorn_totals(name = "합계") |> 
+  gt() |> 
+  cols_align("center") |> 
+  fmt_integer(법령건수) |> 
+  fmt_percent(비율, decimals = 1) |> 
+  gt_theme_538() |> 
+  tab_header(
+    title = md("법령 기준 사무판단 건수")
+  ) 
+```
+
+
+:::{.panel-tabset}
+
+### 표 {.unnumbered}
+
+```{r}
+law_EDA |>
+  group_by(법령명, 사무_판단) |>
+  summarise(건수 = n()) |>
+  ungroup() |> 
+  pivot_wider(names_from = 사무_판단, values_from = 건수, values_fill = 0) |>
+  mutate(합계 = `0` + `1`) |> 
+  arrange(desc(`1`)) |> 
+  rename("사무없음" =`0`,  "사무있음" = `1`) |>
+  mutate(비율 = 사무있음/합계) |> 
+  slice(1:20) |> 
+  gt() |>
+  cols_align("center") |>
+  fmt_integer(c(사무없음, 사무있음, 합계)) |>
+  fmt_percent(비율, decimals = 1) |> 
+  gt_theme_538() |>
+  tab_header(
+    title = md("법령 기준 사무판단 상위 20개 법령")
+  )
+```
+
+### 그래프 {.unnumbered}
+
+```{r}
+library(ggrepel)
+
+law_EDA_ev <- law_EDA |>
+  group_by(법령명, 사무_판단) |>
+  summarise(건수 = n()) |>
+  ungroup() |> 
+  pivot_wider(names_from = 사무_판단, values_from = 건수, values_fill = 0) |>
+  mutate(합계 = `0` + `1`) |> 
+  arrange(desc(`1`)) |> 
+  rename("사무없음" =`0`,  "사무있음" = `1`) |>
+  mutate(is_y_ev = 사무있음 > quantile(사무있음, 0.995) | 사무있음 < quantile(사무있음, 0.005)) |> 
+    mutate(is_x_ev = 합계 > quantile(합계, 0.995) | 합계 < quantile(합계, 0.005))  
+
+law_EDA_ev |> 
+  ggplot(aes(x = 합계, y = 사무있음 )) +
+    geom_point() +
+    labs(x = "조항호 수", y = "사무판단 건수") +
+    scale_x_continuous(labels = scales::comma) +
+    theme_minimal() +
+    geom_text_repel(data = law_EDA_ev |> filter(is_y_ev), aes(label = 법령명), vjust = -1) +
+    geom_text_repel(data = law_EDA_ev |> filter(is_x_ev), aes(label = 법령명), vjust = -1)
+```
+
+:::
+
+
+## 행수분포와 사무판단
+
+```{r}
 law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
 
 law_tbl <- law_raw |>
@@ -23,76 +181,7 @@ law_tbl <- law_raw |>
                               is.na(사무유형) ~ "없음",
                               TRUE ~ 사무유형))  
 
-```  
 
-
-# EDA
-
-## 법령명 행수
-
-```{r}
-library(gt)
-
-law_tbl |> 
-  count(법령명, sort = TRUE, name = "행수") |> 
-  slice_max(행수, n = 10) |> 
-  gt()
-```
-
-## 사무판단 건수
-
-```{r}
-law_tbl |> 
-  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |>
-  # filter(is.na(사무_판단)) |> 
-  count(사무_판단, sort = TRUE, name = "건수") |> 
-  mutate(비율 = 건수 / sum(건수)) |> 
-  janitor::adorn_totals(name = "합계") |> 
-  gt() |> 
-  cols_align("center") |> 
-  fmt_integer(건수) |> 
-  fmt_percent(비율, decimals = 1)
-```
-
-
-## 사무판단 건수와 행수
-
-:::{.panel-tabset}
-
-### 표 {.unnumbered}
-
-
-```{r}
-library(gt)
-law_tbl |> 
-  group_by(법령명) |> 
-  summarise(사무건수 = sum(사무_판단),
-            행수 = n()) |> 
-  slice_max(사무건수, n = 10) |>
-  gt::gt() |> 
-  cols_align("center") 
-  
-```
-
-### 그래프 {.unnumbered}
-
-```{r}
-
-law_tbl |> 
-  group_by(법령명) |> 
-  summarise(사무건수 = sum(사무_판단),
-            행수 = n()) |> 
-  arrange(사무건수) |> 
-  ggplot(aes(x = 행수, y = 사무건수)) +
-    geom_point() 
-```
-
-:::
-
-
-## 행수분포와 사무판단
-
-```{r}
 law_tbl |> 
   group_by(법령명) |> 
   summarise(사무건수 = sum(사무_판단),

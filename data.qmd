@@ -4,11 +4,26 @@ editor_options:
   chunk_output_type: console
 ---
 
+![](images/data.jpg)
+
+# 데이터
+
+원본 데이터와 전처리 작업을 수행한다.
+
+
 # 코드북
+
+::::: {.column-body-outset}
+
+:::{.panel-tabset}
+
+### 기본정보
 
 ```{r}
 library(tidyverse)
 library(readxl)
+library(gt)
+library(gtExtras)
 
 codebook_raw <- read_excel("data/4. 2022 법령상 사무총조사 코드북06.xlsx", skip = 1)
 
@@ -16,177 +31,344 @@ codebook <- codebook_raw |>
   janitor::clean_names(ascii = FALSE) |> 
   fill(everything(), .direction = "down") |> 
   rename("설명" = "x1행_설명") |> 
-  filter(!str_detect(설명, "^주"))
+  filter(!str_detect(설명, "^주")) |> 
+  slice(1:(n()-1))
+
+
+codebook |>
+  select(-설명) |> 
+  slice(1:12) |> 
+  gt::gt(groupname_col = c("변수명")) |>
+  gt_theme_538() |> 
+  cols_width(
+    변수명 ~ px(100),
+    변수설명 ~ px(300)
+  )
 ```
 
-```{r}
-library(gt)
-library(gtExtras)
 
-codebook |> 
-  gt::gt(groupname_col = c("설명", "변수명")) |> 
+
+### 사무분류 
+
+```{r}
+codebook |>
+  select(-설명) |> 
+  slice(32:n()) |> 
+  gt::gt(groupname_col = c("변수명")) |>
   gt_theme_538() |> 
   cols_width(
     변수설명 ~ px(300)
   )
 ```
 
-# 분석
+
+### 사무분류(2019) 
 
 ```{r}
-survey_raw <- read_excel("data/3. 2019사무목록 최종본(인쇄용 최종).xlsx", sheet = "전체(신규법령표시)")
-
-survey_tbl <- survey_raw |> 
-  ## 부처구분
-  mutate(소속 = case_when(str_detect(소관부처, ".*부$") ~ "부",
-                         str_detect(소관부처, ".*청$") ~ "청",
-                         소관부처 %in% c("대통령비서실", "국가안보실", 
-"대통령경호처", "국가정보원") ~ "대통령",
-                         소관부처 %in% c("국무조정실", "국무총리비서실", "국가보훈처", "인사혁신처", "법제처", "식품의약품안전처") ~ "국무총리",
-                         str_detect(소관부처, ".*위원회$") ~ "위원회",
-                         TRUE ~ "기타")) |>
-  ## 사무구분
-  mutate(사무구분_대 = case_when(
-    # 국가
-    str_detect(사무유형, "국가직접처리사무|특별지방행정기관사무|국가위탁사무") ~ "국가",
-    사무유형 %in% c("시도 및 시군구 위임사무", "시도 위임사무", "시군구 위임사무", "시군구 재위임사무") ~ "국가",
-    # 국가-지자체 공동
-    str_detect(사무유형, "국가-시도-시군구 공동사무|국가-시도 공동사무|국가-시군구 공동사무") ~ "공동",
-    # 지방자치
-    str_detect(사무유형, "시도직접처리사무|시도 위탁사무|시도-시군구 위임사무") ~ "지자체",
-    str_detect(사무유형, "시군구직접처리사무|시군구 위탁사무") ~ "지자체",
-    str_detect(사무유형, "시도 및 시군구 공동사무") ~ "지자체",    
-    TRUE ~ "기타"
-  )) |> 
-  mutate(사무구분_중 = case_when(
-    # 국가사무 중분류 ----------------------
-    str_detect(사무구분_대, "국가") &
-    str_detect(사무유형, "국가직접처리사무|특별지방행정기관사무|국가위탁사무")  ~ "국가_직접",
-    str_detect(사무구분_대, "국가") &
-    사무유형 %in% c("시도 및 시군구 위임사무", "시도 위임사무", "시군구 위임사무", "시군구 재위임사무") ~ "국가_위임",
-    # 국가-지자체 공동 중분류 --------------
-    str_detect(사무구분_대, "공동") &
-    사무유형 %in% c("국가-시도-시군구 공동사무", "국가-시도 공동사무", "국가-시군구 공동사무") ~ "공동",
-    # 지방자치 중분류 ----------------------
-    str_detect(사무구분_대, "지자체") &
-    str_detect(사무유형, "시도직접처리사무|시도 위탁사무") ~ "지자체_시도",
-    str_detect(사무구분_대, "지자체") &
-    사무유형 == "시도-시군구 위임사무" ~ "지자체_시도위임",
-    str_detect(사무구분_대, "지자체") &
-    str_detect(사무유형, "시군구직접처리사무|시군구 위탁사무") ~ "지자체_시군구",
-    str_detect(사무구분_대, "지자체") &
-    str_detect(사무유형, "시도 및 시군구 공동사무") ~ "지자체_공동",    
-    TRUE ~ "기타"
-  )) |> 
-  select(사무구분_대, 사무구분_중, everything()) |> 
-  separate(사무구분_중, into = c("사무구분_중", "사무구분_소"), sep = "_") |> 
-  mutate(사무구분_소 = ifelse(is.na(사무구분_소), 사무구분_중, 사무구분_소))
-
-부처수_dat <- survey_tbl |> 
-  group_by(소속, 소관부처) |> 
-  summarise(사무개수= n()) |> 
-  ungroup() |> 
-  select(-사무개수)
-
-부처수_tbl <- survey_tbl |> 
-  group_by(소속, 소관부처) |> 
-  summarise(사무개수= n()) |> 
-  ungroup() |> 
-  group_by(소속) |> 
-  summarise(소관부처수 = n()) |> 
-  arrange(desc(소관부처수))
+codebook |>
+  select(-설명) |> 
+  slice(13:31) |> 
+  gt::gt(groupname_col = c("변수명")) |>
+  gt_theme_538() |> 
+  cols_width(
+    변수설명 ~ px(300)
+  )
 ```
 
-## 소관 사무업무수
+
+:::
+
+:::::
+
+
+# 법령
 
 ```{r}
+library(tidyverse)
+library(readxl)
 library(gt)
 library(gtExtras)
 
-survey_tbl |> 
-  group_by(소관부처) |> 
-  summarise(사무업무수 = n()) |> 
-  left_join(부처수_dat) |> 
-  select(소속, 소관부처, 사무업무수) |> 
-  mutate(비율 = 사무업무수 / sum(사무업무수)) |> 
-  ungroup() |> 
-  # group_by(소속) |> 
-  # arrange(desc(사무업무수)) |> 
-  gt(groupname_col = c("소속")) |> 
-  gt_theme_538() |> 
-  fmt_percent(비율, decimals = 1) |> 
-  fmt_integer(사무업무수) |>
-  # 총계 ----------------------
-  grand_summary_rows(
-    columns = 사무업무수,
-    fns = list(label = "합계", fn = "sum"),
-    fmt = ~ fmt_integer(.),
-    side = "top"  ) |> 
-  grand_summary_rows(
-    columns = 비율,
-    fns = list(label = "합계", fn = "sum"),
-    fmt = ~ fmt_percent(., decimals = 0),
-    side = "top"  ) |>
-  # 소계 ----------------------  
-  summary_rows(
-    columns = 사무업무수,
-    fns = list(label = "소계", fn = "sum"),
-    fmt = ~ fmt_integer(.),
-    side = "bottom"  ) |> 
-  summary_rows(
-    columns = 비율,
-    fns = list(label = "소계", fn = "sum"),
-    fmt = ~ fmt_percent(., decimals = 0),
-    side = "bottom"  ) |> 
-  cols_align(columns = 소관부처,
-             "center")
-```
+law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
 
-
-## 사무유형 사무수
-
-```{r}
-survey_tbl |>
-  group_by(사무구분_대, 사무구분_중, 사무구분_소, 사무유형) |> 
-  summarise(사무업무수 = n()) |> 
-  ungroup() |> 
-  mutate(비율 = 사무업무수 / sum(사무업무수)) |> 
-  ungroup() |> 
-  group_by(사무구분_대, 사무구분_중, 사무구분_소) |> 
-  gt(groupname_col = c("사무구분_대", "사무구분_중")) |> 
-  gt_theme_538() |> 
-  fmt_percent(비율, decimals = 1) |>  
-  fmt_integer(사무업무수) |> 
-  # 총계 ----------------------
-  grand_summary_rows(
-    columns = 사무업무수,
-    fns = list(label = "합계", fn = "sum"),
-    fmt = ~ fmt_integer(.),
-    side = "top"  ) |> 
-  grand_summary_rows(
-    columns = 비율,
-    fns = list(label = "합계", fn = "sum"),
-    fmt = ~ fmt_percent(., decimals = 0),
-    side = "top"  ) |>
-  # 소계 ----------------------  
-  summary_rows(
-    columns = 사무업무수,
-    fns = list(label = "소계", fn = "sum"),
-    fmt = ~ fmt_integer(.),
-    side = "bottom"  ) |> 
-  summary_rows(
-    columns = 비율,
-    fns = list(label = "소계", fn = "sum"),
-    fmt = ~ fmt_percent(., decimals = 0),
-    side = "bottom"  ) |> 
-  cols_align(columns = 사무유형,
-             "center")
-```
-
-## 소관과 사무유형
-
-```{r}
-survey_tbl |>
-  count(소속, 사무구분_대) |> 
-  pivot_wider(names_from = 사무구분_대, values_from = n)
+law_tbl <- law_raw |>
+  janitor::clean_names(ascii = FALSE) |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |> 
+  mutate(사무유형 = str_remove(사무유형, "\r\n")) |>
+  # 사무유형: 국가, 시도, 공동, ...
+  mutate(사무유형 = case_when(사무유형 == "국가시도" ~ "국가-시도",
+                              사무유형 == "정부" ~ "국가",
+                              사무유형 == "공동" ~ "국가-시도",
+                              is.na(사무유형) ~ "없음",
+                              TRUE ~ 사무유형))  
 ```  
+
+## 사무판단
+
+:::{.panel-tabset}
+
+### 조항호 기준
+
+```{r}
+law_tbl |> 
+  count(사무_판단, sort = TRUE, name = "건수") |> 
+  mutate(비율 = 건수 / sum(건수)) |> 
+  mutate(사무_판단 = factor(사무_판단,
+                        levels = c(0, 1),
+                        labels = c("사무없음", "사무있음"))) |> 
+  janitor::adorn_totals(name = "합계") |> 
+  gt() |> 
+  cols_align("center") |> 
+  fmt_integer(건수) |> 
+  fmt_percent(비율, decimals = 1) |> 
+  gt_theme_538() |> 
+  tab_header(
+    title = md("조항호 기준 사무판단 건수")
+  ) 
+```
+
+
+### 법령 기준
+
+```{r}
+law_tbl |>
+  group_by(법령명, 사무_판단) |>
+  summarise(건수 = n()) |>
+  ungroup() |> 
+  pivot_wider(names_from = 사무_판단, values_from = 건수, values_fill = 0) |>
+  mutate(합계 = `0` + `1`) |>
+  mutate(비율 = `1` / 합계 ) |> 
+  rename("사무없음" =`0`,  "사무있음" = `1`) |> 
+  mutate(사무여부 = if_else(사무있음 > 0, "사무있음", "사무없음")) |> 
+  count(사무여부, name = "법령건수") |> 
+  mutate(비율 = 법령건수 / sum(법령건수)) |> 
+  janitor::adorn_totals(name = "합계") |> 
+  gt() |> 
+  cols_align("center") |> 
+  fmt_integer(법령건수) |> 
+  fmt_percent(비율, decimals = 1) |> 
+  gt_theme_538() |> 
+  tab_header(
+    title = md("법령 기준 사무판단 건수")
+  ) 
+```
+
+:::
+
+
+
+## 사무주체
+
+::::: {.panel-tabset}
+
+### 조문 기준
+
+```{r}
+
+law_tbl |>
+  mutate(중앙지자체 = case_when(사무유형 %in% c("국가") ~ "중앙정부",
+                                사무유형 %in% c("시도", "시도-시군구", "시군구") ~ "지자체",
+                                TRUE ~ "공동")) |>
+  filter(사무유형 != "없음") |> 
+  count(중앙지자체, 사무유형, name = "건수") |>
+  mutate(비율 = 건수 / sum(건수)) |> 
+  gt(groupname_col = "중앙지자체",
+     rowname_col   = "사무유형"  ) |> 
+  fmt_percent(비율, decimals = 1) |>
+  fmt_integer(건수) |>
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("건수"),
+    formatter = fmt_integer
+  ) |> 
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("비율"),
+    formatter = fmt_percent,
+    decimals = 0
+  ) |> 
+  gt_theme_538()
+```
+
+### 법령기준(표) {.unnumbered}
+
+```{r}
+law_tbl |>
+  mutate(중앙지자체 = case_when(사무유형 %in% c("국가") ~ "중앙정부",
+                                사무유형 %in% c("시도", "시도-시군구", "시군구") ~ "지자체",
+                                사무유형 == "없음" ~ "없음",
+                                TRUE ~ "공동")) |>  
+  # filter(사무유형 != "없음") |>
+  group_by(법령명) |>
+  count(중앙지자체, 사무유형) |> 
+  ungroup() |> 
+  count(중앙지자체, 사무유형, name = "법령건수", sort = TRUE) |> 
+mutate(비율 = 법령건수 / sum(법령건수)) |> 
+  gt(groupname_col = "중앙지자체",
+     rowname_col   = "사무유형"  ) |> 
+  fmt_percent(비율, decimals = 1) |>
+  fmt_integer(법령건수) |>
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("법령건수"),
+    formatter = fmt_integer
+  ) |> 
+  grand_summary_rows(
+    fns = list(
+      "합계" = ~sum(.)),
+    columns = c("비율"),
+    formatter = fmt_percent,
+    decimals = 0
+  ) |> 
+  gt_theme_538()  
+```
+
+### 법령기준(그래프) {.unnumbered}
+
+[Venn diagram with ggVennDiagram](https://r-charts.com/part-whole/ggvenndiagram/)
+
+```{r}
+library(ggVennDiagram)
+
+
+affairs_type <- law_tbl |>
+  filter(사무유형 != "없음") |>
+  group_by(법령명) |>
+  count(사무유형) |>
+  arrange(법령명, 사무유형) |>
+  ungroup() |>
+  separate(사무유형, into = c("사무1", "사무2", "사무3"), sep = "-") |>
+  mutate(번호 = row_number()) |> 
+  mutate(사무1 = str_glue("{사무1}_{번호}"),
+         사무2 = str_glue("{사무2}_{번호}"),
+         사무3 = str_glue("{사무3}_{번호}")) |> 
+  select(-법령명, -n, -번호) |> 
+  pivot_longer(사무1:사무3, names_to = "사무구분", values_to = "사무") |> 
+  filter(!str_detect(사무, "^NA")) |> 
+  mutate(집합 = case_when(str_detect(사무, "국가") ~ "국가",
+                          str_detect(사무, "시도") ~ "시도",
+                          str_detect(사무, "시군구") ~ "시군구",
+                          TRUE ~ "기타")) |> 
+  mutate(원소 = str_extract(사무, "\\d{1,5}"))
+
+    
+korea_type <- affairs_type |> 
+  filter(집합 == "국가") |> 
+  pull(원소) |> 
+  unlist()
+
+sido_type <- affairs_type |> 
+  filter(집합 == "시도") |> 
+  pull(원소) |> 
+  unlist()
+
+sgg_type <- affairs_type |> 
+  filter(집합 == "시군구") |> 
+  pull(원소) |> 
+  unlist()
+
+ggVennDiagram(list(국가 = korea_type, 시도 = sido_type, 시군구 = sgg_type),
+              category.names = c("국가",
+                                 "시도",
+                                 "구시군"),
+               label_alpha = 0,
+               color = 1, lwd = 0.7) +
+  scale_fill_gradient(low = "#F4FAFE", high = "#4981BF") +
+  theme(legend.position = "none")
+
+```
+
+:::::
+
+# 법령구분
+
+법령은 법률 + 시행령 + 시행규칙 + ~~행정규칙~~ 으로 구성된다.
+결측값(NA)는 현시점(2023년 11월 기준) 법령이 폐지, 입법전환 등 여러 이유로 인해 2022년 6월 국가사무분류 지정단계와 차이가 발생함.
+
+```{r}
+law_type <- law_tbl |>
+  group_by(법령명, 법령_구분) |>
+  summarise(조문수 = n()) |> 
+  ungroup() |>
+  mutate(법령구분 = case_when(
+    str_detect(법령명, "법률$") ~ "법률",
+    str_detect(법령명, "시행령$") ~ "시행령",
+    str_detect(법령명, "시행규칙$") ~ "시행규칙",
+    TRUE ~ 법령명
+  )) 
+
+
+law_set <- read_excel("data/법령정보.xlsx", sheet = '법령목록') |> 
+  janitor::clean_names(ascii = FALSE) |> 
+  rename(법시시 = 법률_시행령_시행규칙_기타구분)
+
+law_type_set <- law_type |>
+  # mutate(법령명 = str_extract(법령명, "[0-9가-힣]+"))
+  left_join(law_set |> select(법령명, 법종구분코드명, 법시시), by = "법령명") |> 
+  mutate(법시시 = case_when(
+    str_detect(법령명, "법률$") ~ "법률",
+    str_detect(법령명, "시행령$") ~ "시행령",
+    str_detect(법령명, "시행규칙$") ~ "시행규칙",
+    TRUE ~ 법시시
+  )) |> 
+  mutate(법령_구분 = as.character(법령_구분)) |> 
+  mutate(법령구분 = case_when(
+    법령_구분 == "1" ~ "법률",
+    법령_구분 == "2" ~ "시행령",
+    법령_구분 == "3" ~ "시행규칙",
+    TRUE ~ 법령_구분
+  )) 
+
+law_type_set |> 
+  count(법령구분, 법시시, name = "조문수", sort = TRUE) |>
+  pivot_wider(names_from = 법시시, values_from = 조문수, values_fill = 0) |> 
+  relocate(법률, .after = 법령구분) |>
+  mutate(법령구분 = ifelse(is.na(법령구분), "결측", 법령구분)) |> 
+  mutate(법령구분 = factor(법령구분, levels = c("법률", "시행령", "시행규칙", "결측"))) |>
+  arrange(법령구분) |>
+  gt() |>
+  gtExtras::gt_theme_538()
+
+```
+
+
+## 오분류 법령
+
+일부 법령은 오분류가 있어 현시점 법령구분을 기준으로 재분류하여 후속 분석 진행함. 
+
+```{r}
+law_type_set |> 
+  filter(법령구분 != 법시시) |> 
+  select(-조문수) |> 
+  gt()
+```
+
+# EDA 데이터 
+
+```{r}
+law_raw <- read_excel("data/(230410)최종결과표(통합본).xlsx", skip = 0)
+
+law_tbl <- law_raw |>
+  janitor::clean_names(ascii = FALSE) |> 
+  mutate(사무_판단 = ifelse(is.na(사무_판단), 0, 사무_판단)) |> 
+  mutate(사무유형 = str_remove(사무유형, "\r\n")) |>
+  # 사무유형: 국가, 시도, 공동, ...
+  mutate(사무유형 = case_when(사무유형 == "국가시도" ~ "국가-시도",
+                              사무유형 == "정부" ~ "국가",
+                              사무유형 == "공동" ~ "국가-시도",
+                              is.na(사무유형) ~ "없음",
+                              TRUE ~ 사무유형))  
+
+law_EDA <- law_tbl |> 
+  left_join(law_type_set |> select(법령명, 법령구분, 법시시), by = "법령명") |> 
+  mutate(법시시구분 = ifelse(is.na(법령구분), 법령구분, 법시시)) |> 
+  select(-x1, -법령_구분, -법령구분, -법시시) |> 
+  rename(법령구분 = 법시시구분)
+
+law_EDA |> 
+  write_rds("data/law_EDA.rds")
+```
+
