@@ -1,0 +1,227 @@
+---
+title: "법률-시행령-시행규칙"
+editor_options: 
+  chunk_output_type: console
+---
+
+# 데이터
+
+```{r}
+## 법률 -> 시행령 -> 시행규칙
+library(tidyverse)
+library(gt)
+library(gtExtras)
+library(readxl)
+
+
+law_set <- read_excel("data/법령정보.xlsx", sheet = '법령목록') |> 
+  janitor::clean_names(ascii = FALSE) |> 
+  filter( 법률_시행령_시행규칙_기타구분 != "기타")
+
+law_nw <- read_excel("data/법령정보.xlsx", sheet = '법령상하위법') |> 
+  janitor::clean_names(ascii = FALSE) |> 
+  select(lev1_법령명, lev2_법령명, lev3_법령명) 
+
+law_struct <- law_set |> 
+  left_join(law_nw, by = c("법령명" = "lev1_법령명")) |> 
+  mutate(법령구조 = case_when(
+    is.na(lev2_법령명) & is.na(lev3_법령명) ~ "법률",
+    !is.na(lev2_법령명) & is.na(lev3_법령명) ~ "법률+시행령",
+    !is.na(lev2_법령명) & !is.na(lev3_법령명) ~ "법률+시행령+규칙",
+    TRUE ~ NA_character_
+  )) |> 
+  group_by(법령명, 법령구조) |> 
+  summarise(법령수 = n() ) |>
+  ungroup() |> 
+  arrange(desc(법령수)) |> 
+  pivot_wider(names_from = 법령구조, values_from = 법령수, values_fill = 0) |>
+  mutate(총계 = 법률 + `법률+시행령` + `법률+시행령+규칙`) |> 
+  select(법령명, 총계, 법률, `법률+시행령`, `법률+시행령+규칙`) 
+  
+
+law_struct |> 
+  write_csv("data/law_struct.csv")
+
+```
+
+
+# 분석
+
+## 법률, 시행령, 규칙 통계
+
+```{r}
+law_struct |>
+  pivot_longer(
+    cols = c(법률, `법률+시행령`, `법률+시행령+규칙`),
+    names_to = "법령구조",
+    values_to = "법령수"
+  ) |>
+  ungroup() |> 
+  filter(법령수 > 0) |> 
+  count(법령구조, name = "법령수") |> 
+  mutate(비율 = 법령수 / sum(법령수)) |> 
+  gt() |> 
+  tab_header(
+    title = md("**법령구조**"),
+    subtitle = md("*법률, 시행령, 시행규칙*")
+  ) |>
+  cols_label(
+    법령구조 = md("*법령구조*"),
+    법령수 = md("*법령수*"),
+    비율 = md("*비율*")
+  ) |>
+  fmt_number(
+    columns = 법령수,
+    decimals = 0
+  ) |> 
+  fmt_percent(
+    columns = 비율,
+    decimals = 1
+  ) |>
+  grand_summary_rows(
+    columns = 법령수,
+    fns = list(
+      "합계" = ~sum(.)
+    ),
+    formatter = fmt_integer
+  ) |> 
+  grand_summary_rows(
+    columns = 비율,
+    fns = list(
+      "합계" = ~sum(.)
+    ),
+    formatter = fmt_percent
+  ) |> 
+  cols_align('center') |> 
+  gt_theme_538()
+
+```
+
+## 법률, 시행령, 규칙 통계
+
+:::{.panel-tabset}
+
+### 법률 + 시행령
+
+```{r}
+law_struct |> 
+  select(법령명, `법률+시행령`) |> 
+  slice_max(`법률+시행령`, n = 10) |> 
+  gt() |>
+  gt_theme_538()
+```
+
+
+### 법률 + 시행령 + 시행규칙
+
+```{r}
+law_struct |> 
+  select(법령명, `법률+시행령+규칙`) |> 
+  slice_max(`법률+시행령+규칙`, n = 10) |> 
+  gt() |>
+  gt_theme_538()
+```
+
+:::
+
+
+# 법령구조 + 사무
+
+:::{.panel-tabset}
+
+## 법률만 있는 법령
+
+```{r}
+law_EDA <- 
+  read_rds("data/law_EDA.rds") 
+
+law_EDA_type <- law_EDA |> 
+  left_join(law_struct, by = c("법령명" = "법령명")) 
+
+law_affair_type_tbl <- law_EDA_type |> 
+  mutate(법률 = if_else(법률 > 0, 1, 0),
+         `법률+시행령` = if_else(`법률+시행령` > 0, 1, 0),
+         `법률+시행령+규칙` = if_else(`법률+시행령+규칙` > 0, 1, 0)) |> 
+  group_by(법령명, 사무_판단) |>
+  select(법령명, 사무_판단, 법률, `법률+시행령`, `법률+시행령+규칙`) |> 
+  summarise(법령행수 = n(),
+            법률  = sum(법률),
+            `법률+시행령` = sum(`법률+시행령`),
+            `법률+시행령+규칙` = sum(`법률+시행령+규칙`)) |> 
+  ungroup()
+
+law_affair_type_tbl |> 
+  select(법령명, 사무_판단, 법률) |> 
+  filter(법률 > 0) |> # 법률만 있는 법령 
+  pivot_wider(names_from = 사무_판단, values_from = 법률, values_fill = 0) |>
+  mutate(합계 = `0` + `1`,
+         비율 = `1` / 합계) |> 
+  arrange(desc(합계)) |> 
+  slice_max(n = 20, 합계) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_number(
+    columns = c(`0`, `1`, 합계),
+    decimals = 0
+  ) |>
+  fmt_percent(
+    columns = 비율,
+    decimals = 1
+  ) 
+  
+```
+
+
+## 법령+시행령 구성 법령
+
+```{r}
+
+law_affair_type_tbl |> 
+  select(법령명, 사무_판단, `법률+시행령`) |> 
+  filter(`법률+시행령` > 0) |> # `법률+시행령` 구성 법령 
+  pivot_wider(names_from = 사무_판단, values_from = `법률+시행령`, values_fill = 0) |>
+  mutate(합계 = `0` + `1`,
+         비율 = `1` / 합계) |> 
+  arrange(desc(합계)) |> 
+  slice_max(n = 20, 합계) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_number(
+    columns = c(`0`, `1`, 합계),
+    decimals = 0
+  ) |>
+  fmt_percent(
+    columns = 비율,
+    decimals = 1
+  ) 
+  
+```
+
+
+## 법령+시행령+규칙 구성 법령
+
+```{r}
+
+law_affair_type_tbl |> 
+  select(법령명, 사무_판단, `법률+시행령+규칙`) |> 
+  filter(`법률+시행령+규칙` > 0) |> # `법률+시행령+규칙` 구성 법령 
+  pivot_wider(names_from = 사무_판단, values_from = `법률+시행령+규칙`, values_fill = 0) |>
+  mutate(합계 = `0` + `1`,
+         비율 = `1` / 합계) |> 
+  arrange(desc(합계)) |> 
+  slice_max(n = 20, 합계) |> 
+  gt() |> 
+  gt_theme_538() |> 
+  fmt_number(
+    columns = c(`0`, `1`, 합계),
+    decimals = 0
+  ) |>
+  fmt_percent(
+    columns = 비율,
+    decimals = 1
+  ) 
+  
+```
+
+:::
+
