@@ -151,8 +151,8 @@ law_affair_type_tbl <- law_EDA_type |>
   ungroup()
 
 law_affair_type_tbl |> 
-  select(법령명, 사무_판단, 법률) |> 
-  filter(법률 > 0) |> # 법률만 있는 법령 
+  select(법령명, 사무_판단, 법률, `법률+시행령`, `법률+시행령+규칙`) |> 
+  filter(`법률+시행령` == 0 | `법률+시행령+규칙` == 0 ) |> # 법률만 있는 법령 
   pivot_wider(names_from = 사무_판단, values_from = 법률, values_fill = 0) |>
   mutate(합계 = `0` + `1`,
          비율 = `1` / 합계) |> 
@@ -204,7 +204,7 @@ law_affair_type_tbl |>
 
 law_affair_type_tbl |> 
   select(법령명, 사무_판단, `법률+시행령+규칙`) |> 
-  filter(`법률+시행령+규칙` > 0) |> # `법률+시행령+규칙` 구성 법령 
+  filter(`법률+시행령+규칙` > 0) |> # `법률+시행령+규칙` 구성 법령
   pivot_wider(names_from = 사무_판단, values_from = `법률+시행령+규칙`, values_fill = 0) |>
   mutate(합계 = `0` + `1`,
          비율 = `1` / 합계) |> 
