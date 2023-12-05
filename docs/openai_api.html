@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>법령상 사무총조사 - 법정사무 총조사</title>
+<title>법령상 사무총조사 - OpenAI API</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -86,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="./index.html" rel="" target="">
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -160,8 +194,13 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">목차</h2>
    
   <ul>
-  <li><a href="#법령현황" id="toc-법령현황" class="nav-link active" data-scroll-target="#법령현황"><span class="header-section-number">1</span> 법령현황</a></li>
-  <li><a href="#사무구분" id="toc-사무구분" class="nav-link" data-scroll-target="#사무구분"><span class="header-section-number">2</span> 사무구분</a></li>
+  <li><a href="#데이터" id="toc-데이터" class="nav-link active" data-scroll-target="#데이터"><span class="header-section-number">1</span> 데이터</a></li>
+  <li><a href="#모형" id="toc-모형" class="nav-link" data-scroll-target="#모형"><span class="header-section-number">2</span> 모형</a>
+  <ul class="collapse">
+  <li><a href="#지문-추출" id="toc-지문-추출" class="nav-link" data-scroll-target="#지문-추출"><span class="header-section-number">2.1</span> 지문 추출</a></li>
+  <li><a href="#사무주체" id="toc-사무주체" class="nav-link" data-scroll-target="#사무주체"><span class="header-section-number">2.2</span> 사무주체</a></li>
+  <li><a href="#사무주체-1" id="toc-사무주체-1" class="nav-link" data-scroll-target="#사무주체-1"><span class="header-section-number">2.3</span> 사무주체</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -170,7 +209,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">법정사무 총조사</h1>
+<h1 class="title">OpenAI API</h1>
 </div>
 
 
@@ -185,83 +224,124 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="법령현황" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> 법령현황</h1>
-<p>’22.5.1. 기준 중앙행정기관 소관 전체 법령(4,758개) 중 선정 제외 기준 에 따라 400개 법령 제외, 연구대상 법령은 약 <strong>4,358개</strong></p>
-<table class="table">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 62%">
-<col style="width: 5%">
-<col style="width: 23%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>구분</th>
-<th>기준</th>
-<th colspan="2">대상 | 세부구분 |</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>전체</td>
-<td><p>’22.5.1. 기준 법제처 법령정보센터에 등록된 중앙행정기관 소관 법령*</p>
-<p>- 입법부‧사법부 등 중앙행정기관이 아닌 기관이 소관하는 법령 제외 * 법령은 동일하나 소관 기관이 다수인 경우 주된 소관 기관을 대상으로 산정</p></td>
-<td>4,758개</td>
-<td><p>・1,554개 법률</p>
-<p>・1,825개 시행령</p>
-<p>・1,379개 시행규칙</p></td>
-</tr>
-<tr class="even">
-<td>제외 (400개)</td>
-<td>① 법원이 사무수행주체가 되는 규정으로 구성* * (예) 가사‧민사‧형사소송법, 비송사건절차법</td>
-<td>54개</td>
-<td>・36개 법률 ・9개 시행령 ・9개 시행규칙</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>② 조직 및 직제 구성 관련 규정으로만 구성* * (예) 국무조정실과 그 소속기관 직제</td>
-<td>174개</td>
-<td>・12개 법률 ・87개 시행령 ・75개 시행규칙</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>③ 사무처리기준 관련 규정으로만 구성* * (예) 관세부과에 관한 규칙, 행정절차법</td>
-<td>119개</td>
-<td>・16개 법률 ・32개 시행령 ・71개 시행규칙</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td>④ 사법(私法)관계에 대해서만 규율* * (예) 민법, 상법, 어음법, 주택임대차보호법</td>
-<td>32개</td>
-<td>・20개 법률 ・11개 시행령 ・1개 시행규칙</td>
-</tr>
-<tr class="even">
-<td></td>
-<td>⑤ 국가형벌권의 내용과 그 집행 방법 등 형사(刑事) 법령으로만 구성* * (예) 형법, 국내재산 도피 방지법 등</td>
-<td>21개</td>
-<td>・15개 법률 ・5개 시행령 ・1개 시행규칙</td>
-</tr>
-<tr class="odd">
-<td>검토 대상 법령</td>
-<td>’22.5월 현행 법령 중 중앙행정기관, 지방 자치단체를 사무수행주체로 규정하는 법령</td>
-<td>4,358개</td>
-<td>・1,455개 법률 ・1,681개 시행령 ・1,222개 시행규칙</td>
-</tr>
-</tbody>
-</table>
+<section id="데이터" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> 데이터</h1>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtExtras)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>space_law <span class="ot">&lt;-</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_rds</span>(<span class="st">"data/space_law.rds"</span>)</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 </section>
-<section id="사무구분" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> 사무구분</h1>
-<p>사무유형은 법령상 권한 및 책임이 귀속되는 주체를 기준으로 국가사무, 국가와 지방자치단체의 공동사무, 자치사무로 유형화함</p>
+<section id="모형" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> 모형</h1>
+<section id="지문-추출" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="지문-추출"><span class="header-section-number">2.1</span> 지문 추출</h2>
+<div class="cell">
+<details>
+<summary>코드</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>space_page <span class="ot">&lt;-</span> space_law <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(법령문 <span class="ot">=</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"{paste0('제',조_번호, '조 ')}"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"{ifelse(is.na(항_번호), '', paste0(항_번호, '항 '))}"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"{ifelse(is.na(호_번호), '', paste0(호_번호, '호 '))}"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"{조문제목} {조문}"</span>))  <span class="sc">|&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(법령명, 법령문)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>space_page <span class="sc">|&gt;</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(법령문) <span class="sc">|&gt;</span> clipr<span class="sc">::</span><span class="fu">write_clip</span>()</span></code><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/workflow.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="공동사무 재산정 방식"><img src="images/workflow.png" class="img-fluid figure-img"></a></p>
-<figcaption class="figure-caption">공동사무 재산정 방식</figcaption>
+<p><a href="images/openai_gpt4.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/openai_gpt4.jpg" class="img-fluid figure-img"></a></p>
 </figure>
+</div>
+</section>
+<section id="사무주체" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="사무주체"><span class="header-section-number">2.2</span> 사무주체</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">프롬프트</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">챗GPT 답변</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<pre><code>다음 법령문에서 국가기관과 장차관을 추출해줘.
+
+제1조 목적 제1조(목적) 이 법은 우주손해가 발생한 경우의 손해배상 범위와 책임한계 등을 정하여 피해자를 보호하고 우주개발 사업의 건전한 발전에 기여하는 것을 목적으로 한다.
+제2조 정의 제2조(정의) 이 법에서 사용하는 용어의 정의는 다음과 같다.
+제2조 1호 정의 1. "우주물체"란 「우주개발진흥법」 제2조제3호에 따른 우주물체를 말한다.
+제2조 2호 정의 2. "우주물체 발사자"란 「우주개발진흥법」제8조에 따라 우주물체를 예비등록 또는 등록한 자나 같은 법 제11조에 따라 우주발사체 발사허가를 받은 자를 말한다.
+제2조 3호 정의 3. "우주물체 발사"란 「우주개발진흥법」제11조제1항에 따라 허가를 받은 자가 우주물체를 발사하는 것을 말하며, 발사준비ㆍ시험발사 및 성공하지 못한 발사를 포함한다.
+제2조 4호 정의 4. "우주손해"란 우주물체의 발사ㆍ운용 등으로 인하여 발생된 제3자의 사망ㆍ부상 및 건강의 손상과 같은 인적 손해와 재산의 파괴ㆍ훼손ㆍ망실과 같은 물적 손해를 말한다.
+제3조 국제협약과의 관계 등 제3조(국제협약과의 관계 등)
+제3조 1항 국제협약과의 관계 등 ① 정부는 「우주물체에 의하여 발생한 손해에 대한 국제책임에 관한 협약」에 따라 정부가 외국정부에 대하여 손해배상을 한 경우에는 우주물체 발사자에 대하여 구상할 수 있다.
+제3조 2항 국제협약과의 관계 등 ② 이 법은 대한민국 국민, 대한민국의 법령에 따라 설립된 법인ㆍ단체 또는 대한민국 정부가 입은 우주손해의 배상을 금지하거나 제한하는 국가의 개인ㆍ법인ㆍ단체 또는 정부에 대하여는 그 적용을 배제 또는 제한할 수 있다.
+제4조 무과실책임 및 책임의 집중 등 제4조(무과실책임 및 책임의 집중 등)
+제4조 1항 무과실책임 및 책임의 집중 등 ① 우주손해가 발생한 경우에는 해당 우주물체 발사자가 그 손해를 배상할 책임이 있다. 다만, 국가간의 무력충돌, 적대행위, 내란 또는 반란으로 인한 우주손해와 우주공간에서 발생한 우주손해의 경우에는 고의 또는 과실이 있는 경우에 한한다.
+제4조 2항 무과실책임 및 책임의 집중 등 ② 제3자의 고의 또는 과실로 인하여 생긴 우주손해를 제1항에 따라 배상한 우주물체 발사자는 그에 대하여 구상할 수 있다. 다만, 그 손해가 우주물체 발사 등에 제공될 자재의 공급이나 역무(노무를 포함한다. 이하 같다)의 제공에 의하여 생긴 때에는 해당 자재의 공급이나 역무를 제공한 자나 그 종업원의 고의 또는 중대한 과실이 있을 때에 한하여 구상할 수 있다.
+제4조 3항 무과실책임 및 책임의 집중 등 ③ 우주손해에 대하여는 「제조물책임법」을 적용하지 아니한다.
+제5조 손해배상책임 한도액 제5조(손해배상책임 한도액) 우주물체 발사자가 배상하여야 하는 책임한도는 2천억원으로 한다.
+제6조 손해배상 책임보험의 가입 제6조(손해배상 책임보험의 가입)
+제6조 1항 손해배상 책임보험의 가입 ① 「우주개발진흥법」 제11조에 따라 우주발사체의 발사허가를 받고자 하는 자는 손해배상을 목적으로 하는 책임보험에 가입하여야 한다.
+제6조 2항 손해배상 책임보험의 가입 ② 제1항에 따라 가입하여야 하는 보험금액은 제5조에 따른 손해배상책임 한도액의 범위 안에서 우주물체의 특성, 기술의 난이도, 발사장 주변 여건 및 국내외 보험시장 등을 고려하여 과학기술정보통신부장관이 정하여 고시한다. &lt;개정 2013.3.23, 2017.7.26&gt;
+제7조 정부의 조치 제7조(정부의 조치)
+제7조 1항 정부의 조치 ① 정부는 우주손해가 발생한 경우에 피해자의 구조 및 피해의 확대 방지에 필요한 조치를 시행하여야 한다.
+제7조 2항 정부의 조치 ② 정부는 제4조제1항에 따라 우주물체 발사자가 배상하여야 할 손해배상액이 제6조제2항의 보험금액을 초과하는 경우에 이 법의 목적을 달성하기 위하여 필요하다고 인정할 때에는 우주물체 발사자에 대하여 필요한 지원을 할 수 있다.
+제7조 3항 정부의 조치 ③ 정부가 제2항의 지원을 할 때에는 국회의 의결에 의하여 허용된 범위 안에서 한다.
+제8조 권리행사의 기간 제8조(권리행사의 기간)
+제8조 1항 권리행사의 기간 ① 이 법에 따른 손해배상청구권은 피해자 또는 그 법정대리인이 그 손해 및 제4조제1항에 따라 손해배상책임을 지는 자를 안 날부터 1년 이내에 행사하지 아니하면 시효로 인하여 소멸한다.
+제8조 2항 권리행사의 기간 ② 이 법에 따른 손해배상청구권은 우주손해가 발생한 날부터 3년이 경과한 경우에는 행사하지 못한다.
+제9조 규제의 재검토 제9조(규제의 재검토) 과학기술정보통신부장관은 제8조에 따른 손해배상청구권의 권리행사 기간에 대하여 2016년 1월 1일을 기준으로 2년마다(매 2년이 되는 해의 1월 1일 전까지를 말한다) 폐지, 완화 또는 유지 등의 타당성을 검토하여야 한다. &lt;개정 2017.7.26&gt;</code></pre>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>이 법령문에서 언급된 국가기관과 장차관은 다음과 같다:</p>
+<ol type="1">
+<li><strong>국가기관</strong>:
+<ul>
+<li>정부: 제3조 1항, 제7조 1항, 제7조 2항, 제7조 3항에 언급된다. 정부는 우주물체에 의한 손해에 대한 국제책임에 관한 협약에 따라 외국정부에 대한 손해배상을 한 경우 우주물체 발사자에 대하여 구상권을 행사할 수 있다고 규정하며, 우주손해 발생 시 피해자 구조 및 피해 확대 방지 조치를 시행할 책임이 있다. 또한, 우주물체 발사자의 손해배상액이 초과할 경우 필요한 지원을 할 수 있으며, 이 지원은 국회의 의결에 의해 허용되는 범위 안에서 이루어진다.</li>
+</ul></li>
+<li><strong>장차관</strong>:
+<ul>
+<li>과학기술정보통신부장관: 제6조 2항, 제9조에 언급된다. 이 장관은 우주발사체 발사허가를 받고자 하는 자가 가입해야 하는 책임보험의 보험금액을 정하고 고시하는 책임이 있으며, 손해배상청구권의 권리행사 기간에 대한 폐지, 완화 또는 유지 등의 타당성을 검토하는 역할을 한다.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="사무주체-1" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="사무주체-1"><span class="header-section-number">2.3</span> 사무주체</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">프롬프트</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">챗GPT 답변</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<pre><code>정부와 과학기술정보통신부장관이 담당해야하는 업무는 뭐야?</code></pre>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>정부와 과학기술정보통신부장관이 담당해야 하는 업무는 다음과 같다:</p>
+<ol type="1">
+<li><strong>정부의 업무</strong>:
+<ul>
+<li><strong>국제책임에 따른 구상권 행사</strong>: 우주물체에 의한 손해에 관한 국제책임 협약에 따라 외국 정부에 대한 손해배상을 한 경우, 우주물체 발사자에 대해 구상권을 행사할 수 있다(제3조 1항).</li>
+<li><strong>피해자 구조 및 피해 확대 방지</strong>: 우주손해 발생 시, 피해자 구조 및 피해 확대 방지를 위한 필요한 조치를 시행해야 한다(제7조 1항).</li>
+<li><strong>손해배상액 초과 시 지원</strong>: 우주물체 발사자가 손해배상액을 초과하여 배상해야 할 경우, 필요한 지원을 할 수 있다. 이 지원은 국회의 의결에 의한 범위 내에서 이루어진다(제7조 2항, 3항).</li>
+</ul></li>
+<li><strong>과학기술정보통신부장관의 업무</strong>:
+<ul>
+<li><strong>손해배상 책임보험 가입 규정 고시</strong>: 우주발사체 발사허가를 받고자 하는 자가 가입해야 하는 책임보험의 보험금액을 정하고 이를 고시한다(제6조 2항).</li>
+<li><strong>규제 재검토</strong>: 손해배상청구권의 권리행사 기간에 대해 정기적으로 폐지, 완화, 또는 유지 등의 타당성을 검토해야 한다(제9조).</li>
+</ul></li>
+</ol>
+</div>
+</div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -614,7 +694,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","openEffect":"fade","descPosition":"bottom","loop":true,"selector":".lightbox"});</script>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"fade","openEffect":"fade","descPosition":"bottom","loop":true});</script>
 
 
 
