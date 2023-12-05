@@ -71,6 +71,7 @@ website:
           text: "법률-시행령-시행규칙"          
         - href: EDA_y.qmd
           text: "Y 교차분석"
-
+        - href: EDA_viz.qmd
+          text: "시각화"
 
   
