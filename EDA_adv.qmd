@@ -112,7 +112,41 @@ law_tbl |>
 
 ![](images/law_example.png)
 
+### AI 사무판단
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(gtExtras)
+
+krila <- read_csv("data/final_df(total2).csv")
+
+space_tbl <- krila |>
+  filter(str_detect(법령명, "우주손해배상법")) 
+
+space_tbl |> 
+  select(법령명, 조문제목, 조문, 사무판단, `사무유형`, `사무판단 예측`, `사무판단 예측확률`, 
+         `국가 확률`, `지방 확률`, `공동 확률`) |> 
+  gt() |> 
+  gt_theme_hangul() |> 
+  gt::fmt_missing(columns = everything(), missing_text = "-") |> 
+  cols_align( 조문, align = 'left') |> 
+  gt::tab_spanner(columns = c(`사무판단`, 사무유형),
+                  label = "전문가 판단")  |> 
+  gt::tab_spanner(columns = c(`사무판단 예측`, `사무판단 예측확률`),
+                  label = "AI 사무 판단")  |>   
+  gt::tab_spanner(columns = c(`국가 확률`, `지방 확률`, `공동 확률`),
+                  label = "AI 사무 주체 예측") |> 
+  fmt_percent(columns = contains("확률"), decimals = 1) |> 
+  tab_header(title = "우주손해배상법 사무예측")
+```
+
+
 :::
+
+
+
 
 ## 법령별 사무판단 통계
 
